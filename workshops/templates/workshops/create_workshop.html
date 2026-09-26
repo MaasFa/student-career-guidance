@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Create Workshop</title>
+</head>
+
+<body>
+
+<h1>Create Lecture / Workshop</h1>
+
+<p>
+    Publish a learning session for students and other mentors.
+</p>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Publish Session
+    </button>
+
+</form>
+
+<br>
+
+<a href="{% url 'mentor_dashboard' %}">
+    Back to Dashboard
+</a>
+
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Schedule Session</title>
+</head>
+
+<body>
+
+<h1>Schedule Personal Session</h1>
+
+<h3>
+    Student: {{ session.student_query.name }}
+</h3>
+
+<p>
+    <strong>Subject:</strong>
+    {{ session.student_query.subject }}
+</p>
+
+<p>
+    <strong>Topic:</strong>
+    {{ session.student_query.topic }}
+</p>
+
+<p>
+    <strong>Query:</strong>
+    {{ session.student_query.query }}
+</p>
+
+<hr>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Confirm Session
+    </button>
+
+</form>
+
+<br>
+
+<a href="{% url 'mentor_queries' %}">
+    Back to Queries
+</a>
+
+</body>
+
+</html>

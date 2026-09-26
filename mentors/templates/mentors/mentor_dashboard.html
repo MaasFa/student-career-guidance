@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mentor Dashboard</title>
+</head>
+
+<body>
+
+<h1>Mentor Dashboard</h1>
+
+<p>
+    Welcome, {{ mentor.name }}!
+</p>
+
+<p>
+    You are logged in as a Mentor.
+</p>
+
+<p>
+    <strong>Expertise:</strong> {{ mentor.expertise }}
+</p>
+
+<hr>
+
+<h2>Availability</h2>
+
+<a href="{% url 'add_availability' %}">
+    Set Availability
+</a>
+
+<br><br>
+
+{% if availabilities %}
+
+<h3>My Available Slots</h3>
+
+<table border="1" cellpadding="8">
+
+    <tr>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Status</th>
+    </tr>
+
+    {% for slot in availabilities %}
+
+    <tr>
+        <td>{{ slot.date }}</td>
+        <td>{{ slot.start_time }}</td>
+        <td>{{ slot.end_time }}</td>
+
+        <td>
+            {% if slot.is_available %}
+                Available
+            {% else %}
+                Booked
+            {% endif %}
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>No availability added yet.</p>
+
+{% endif %}
+
+<hr>
+
+
+<h2>Public Sessions</h2>
+
+<p>
+    Create lectures and workshops that students and mentors can join.
+</p>
+
+<a href="{% url 'create_workshop' %}">
+    Create Lecture / Workshop
+</a>
+
+<hr>
+
+<h2>Sessions</h2>
+<hr>
+
+<h2>My Published Sessions</h2>
+
+{% if workshops %}
+
+    {% for workshop in workshops %}
+
+        <div>
+
+            <h3>{{ workshop.title }}</h3>
+
+            <p>
+                <strong>Type:</strong>
+                {{ workshop.get_session_type_display }}
+            </p>
+
+            <p>
+                <strong>Topic:</strong>
+                {{ workshop.topic }}
+            </p>
+
+            <p>
+                <strong>Date:</strong>
+                {{ workshop.date }}
+            </p>
+
+            <p>
+                <strong>Time:</strong>
+                {{ workshop.start_time }}
+            </p>
+
+            <p>
+                <strong>Duration:</strong>
+                {{ workshop.duration }} minutes
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                {{ workshop.get_status_display }}
+            </p>
+
+            <a href="{{ workshop.meeting_link }}" target="_blank">
+                Join Session
+            </a>
+
+        </div>
+
+        <hr>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>You have not published any sessions yet.</p>
+
+{% endif %}
+<hr>
+
+<h2>Student Queries</h2>
+
+<p>
+    View students who are looking for personal guidance.
+</p>
+
+<a href="{% url 'mentor_queries' %}">
+    View Student Queries
+</a>
+<p>View Bookings — Coming Soon</p>
+
+<p>Manage Sessions — Coming Soon</p>
+
+<p>Add Meeting Links — Coming Soon</p>
+
+<br>
+
+<a href="{% url 'logout' %}">
+    Logout
+</a>
+
+</body>
+</html>

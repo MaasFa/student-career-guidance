@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | CareerPath
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Header -->
+
+    <div class="dashboard-header">
+
+        <div>
+            <p class="dashboard-label">STUDENT DASHBOARD</p>
+
+            <h1>
+                Welcome back, {{ request.user.username }} 👋
+            </h1>
+
+            <p>
+                Continue building your career and learning journey.
+            </p>
+        </div>
+
+        <a href="{% url 'create_query' %}" class="btn btn-primary">
+            Ask a Mentor
+        </a>
+
+    </div>
+
+
+    <!-- Quick Stats -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">📅</div>
+
+            <div>
+                <span>Upcoming Sessions</span>
+                <strong>{{ sessions|length }}</strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">📚</div>
+
+            <div>
+                <span>Upcoming Workshops</span>
+                <strong>{{ workshops|length }}</strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">🧭</div>
+
+            <div>
+                <span>Career Roadmap</span>
+                <strong>Explore</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Personalized Guidance -->
+
+    <div class="guidance-card">
+
+        <div>
+
+            <span class="premium-badge">
+                PREMIUM GUIDANCE
+            </span>
+
+            <h2>
+                Need personalized career guidance?
+            </h2>
+
+            <p>
+                Ask a mentor about your skills, career path,
+                projects, interviews, or learning roadmap.
+            </p>
+
+        </div>
+
+        <a href="{% url 'create_query' %}" class="btn btn-primary">
+            Ask a Mentor →
+        </a>
+
+    </div>
+
+
+    <!-- Sessions -->
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>My Upcoming Sessions</h2>
+
+                <p>
+                    Your personalized mentor sessions
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if sessions %}
+
+        <div class="card-grid">
+
+            {% for session in sessions %}
+
+            <div class="session-card">
+
+                <div class="session-top">
+
+                    <span class="status status-success">
+                        Confirmed
+                    </span>
+
+                    <span>
+                        📅 {{ session.date }}
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    {{ session.student_query.topic }}
+                </h3>
+
+                <p class="session-mentor">
+                    👨‍🏫 {{ session.mentor.name }}
+                </p>
+
+                <p class="session-time">
+                    🕐 {{ session.start_time }} -
+                    {{ session.end_time }}
+                </p>
+
+
+                {% if session.meeting_link %}
+
+                <a
+                    href="{{ session.meeting_link }}"
+                    target="_blank"
+                    class="btn btn-primary"
+                >
+                    Join Session
+                </a>
+
+                {% else %}
+
+                <span class="meeting-pending">
+                    Meeting link will be added
+                </span>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-card">
+
+            <div class="empty-icon">📅</div>
+
+            <h3>No upcoming sessions</h3>
+
+            <p>
+                Submit a query to connect with a mentor.
+            </p>
+
+            <a href="{% url 'create_query' %}" class="btn btn-secondary">
+                Ask a Mentor
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- Workshops -->
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>Upcoming Lectures & Workshops</h2>
+
+                <p>
+                    Learn from mentors and explore new skills.
+                </p>
+
+            </div>
+
+            <a href="{% url 'workshop_list' %}">
+                View all →
+            </a>
+
+        </div>
+
+
+        {% if workshops %}
+
+        <div class="card-grid">
+
+            {% for workshop in workshops %}
+
+            <div class="workshop-card">
+
+                <div class="workshop-header">
+
+                    <span class="workshop-type">
+                        {{ workshop.get_session_type_display }}
+                    </span>
+
+                    <span class="status status-success">
+                        Published
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    {{ workshop.title }}
+                </h3>
+
+
+                <p class="workshop-topic">
+                    {{ workshop.topic }}
+                </p>
+
+
+                <p class="workshop-description">
+                    {{ workshop.description|truncatewords:20 }}
+                </p>
+
+
+                <div class="workshop-details">
+
+                    <span>
+                        👨‍🏫 {{ workshop.mentor.name }}
+                    </span>
+
+                    <span>
+                        📅 {{ workshop.date }}
+                    </span>
+
+                    <span>
+                        🕐 {{ workshop.start_time }}
+                    </span>
+
+                    <span>
+                        ⏱ {{ workshop.duration }} min
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="{{ workshop.meeting_link }}"
+                    target="_blank"
+                    class="btn btn-primary workshop-button"
+                >
+                    Join Session →
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-card">
+
+            <div class="empty-icon">📚</div>
+
+            <h3>No workshops yet</h3>
+
+            <p>
+                New lectures and workshops will appear here.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- Career Roadmap -->
+
+    <section class="roadmap-card">
+
+        <div>
+
+            <span class="premium-badge">
+                CAREER GUIDANCE
+            </span>
+
+            <h2>
+                Build your personalized career roadmap
+            </h2>
+
+            <p>
+                Discover suitable career paths, identify skill gaps,
+                and follow a structured learning roadmap.
+            </p>
+
+        </div>
+
+        <a href="#" class="btn btn-secondary">
+            Explore Roadmap →
+        </a>
+
+    </section>
+
+</div>
+
+{% endblock %}

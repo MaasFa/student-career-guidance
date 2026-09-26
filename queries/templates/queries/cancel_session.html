@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cancel Session</title>
+</head>
+
+<body>
+
+    <h1>Cancel Session</h1>
+
+    <p>
+        Are you sure you want to cancel this session?
+    </p>
+
+    <p>
+        Student:
+        <strong>{{ session.student.username }}</strong>
+    </p>
+
+    <p>
+        Topic:
+        <strong>{{ session.student_query.topic }}</strong>
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Yes, Cancel Session
+        </button>
+
+        <a href="{% url 'mentor_queries' %}">
+            No, Go Back
+        </a>
+
+    </form>
+
+</body>
+</html>

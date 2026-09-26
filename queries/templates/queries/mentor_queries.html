@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Queries</title>
+</head>
+
+<body>
+
+<h1>Student Queries</h1>
+
+<p>
+    Review questions submitted by students.
+</p>
+
+<hr>
+
+{% if queries %}
+
+    {% for student_query in queries %}
+
+        <div style="
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+        ">
+
+            <h2>
+                {{ student_query.topic }}
+            </h2>
+
+            <p>
+                <strong>Student:</strong>
+                {{ student_query.name }}
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                {{ student_query.email }}
+            </p>
+
+            <p>
+                <strong>Subject:</strong>
+                {{ student_query.subject }}
+            </p>
+
+            <p>
+                <strong>Topic:</strong>
+                {{ student_query.topic }}
+            </p>
+
+            <p>
+                <strong>Question:</strong>
+            </p>
+
+            <p>
+                {{ student_query.query }}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                {{ student_query.get_status_display }}
+            </p>
+
+            {% if student_query.status == "open" %}
+
+            <a href="{% url 'offer_session' student_query.id %}">
+            Offer Session
+            </a>
+
+            {% elif student_query.status == "accepted" %}
+
+            <p>
+            Session offered.
+            </p>
+
+    {% elif student_query.status == "scheduled" %}
+
+    <p>
+        Session scheduled.
+    </p>
+
+    <p>
+        Date:
+        {{ student_query.session.date }}
+    </p>
+
+    <p>
+        Time:
+        {{ student_query.session.start_time }}
+        -
+        {{ student_query.session.end_time }}
+    </p>
+
+    <a href="{% url 'edit_session' student_query.session.id %}">
+        Edit Session
+    </a>
+
+    <a href="{% url 'cancel_session' student_query.session.id %}">
+        Cancel Session
+    </a>
+
+{% endif %}
+{% endif %}
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>
+        No student queries available.
+    </p>
+
+{% endif %}
+
+<br>
+
+<a href="{% url 'mentor_dashboard' %}">
+    Back to Mentor Dashboard
+</a>
+
+</body>
+
+</html>

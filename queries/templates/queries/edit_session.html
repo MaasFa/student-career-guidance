@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Session</title>
+</head>
+
+<body>
+
+    <h1>Edit Session</h1>
+
+    <h3>Student: {{ session.student.username }}</h3>
+
+    <p>
+        Topic:
+        {{ session.student_query.topic }}
+    </p>
+
+    <p>
+        Query:
+        {{ session.student_query.query }}
+    </p>
+
+    <hr>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Update Session
+        </button>
+
+        <a href="{% url 'mentor_queries' %}">
+            Cancel
+        </a>
+
+    </form>
+
+</body>
+</html>
