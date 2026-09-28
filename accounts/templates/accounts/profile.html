@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | CareerPath{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+
+        <div>
+            <h1>My Profile</h1>
+
+            <p>
+                Manage your personal information and career interests.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'edit_profile' %}"
+            class="btn btn-primary"
+        >
+            Edit Profile
+        </a>
+
+    </div>
+
+
+    <div class="profile-page-card">
+
+        <div class="profile-header">
+
+            {% if profile.profile_image %}
+
+                <img
+                    src="{{ profile.profile_image.url }}"
+                    class="profile-avatar"
+                    alt="Profile"
+                >
+
+            {% else %}
+
+                <div class="profile-avatar-placeholder">
+                    {{ user.username|first|upper }}
+                </div>
+
+            {% endif %}
+
+
+            <div>
+
+                <h2>
+                    {% if user.first_name %}
+                        {{ user.first_name }} {{ user.last_name }}
+                    {% else %}
+                        {{ user.username }}
+                    {% endif %}
+                </h2>
+
+                <span class="profile-role">
+                    Student
+                </span>
+
+                <p>
+                    {{ user.email }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-section">
+
+            <h3>Education</h3>
+
+            <p>
+                {% if profile.education %}
+                    {{ profile.education }}
+                {% else %}
+                    Not added yet.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <div class="profile-section">
+
+            <h3>Career Interests</h3>
+
+            <p>
+                {% if profile.career_interest %}
+                    {{ profile.career_interest }}
+                {% else %}
+                    Not added yet.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <div class="profile-section">
+
+            <h3>Skills</h3>
+
+            <p>
+                {% if profile.skills %}
+                    {{ profile.skills }}
+                {% else %}
+                    Not added yet.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <div class="profile-section">
+
+            <h3>About Me</h3>
+
+            <p>
+                {% if profile.bio %}
+                    {{ profile.bio }}
+                {% else %}
+                    No bio added yet.
+                {% endif %}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

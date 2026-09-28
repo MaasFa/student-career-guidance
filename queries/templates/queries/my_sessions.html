@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}My Sessions | CareerPath{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+
+        <div>
+            <h1>My Sessions</h1>
+
+            <p>
+                Manage your personalized mentoring sessions.
+            </p>
+        </div>
+
+        <a href="{% url 'create_query' %}" class="btn btn-primary">
+            + Ask a Mentor
+        </a>
+
+    </div>
+
+
+    <!-- Sessions -->
+
+    <div class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Your Mentoring Sessions</h2>
+
+                <p>
+                    Join upcoming sessions or review your previous guidance.
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if sessions %}
+
+            <div class="session-list">
+
+                {% for session in sessions %}
+
+                    <div class="my-session-card">
+
+                        <!-- Left -->
+                        <div class="session-main">
+
+                            <div class="mentor-avatar">
+                                {{ session.mentor.name|first|upper }}
+                            </div>
+
+                            <div class="session-info">
+
+                                <span class="session-topic">
+                                    {{ session.student_query.topic }}
+                                </span>
+
+                                <h3>
+                                    {{ session.mentor.name }}
+                                </h3>
+
+                                <p class="mentor-expertise">
+                                    {{ session.mentor.expertise }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Details -->
+                        <div class="session-details">
+
+                            <div class="session-detail">
+
+                                <span class="detail-icon">
+                                    📅
+                                </span>
+
+                                <div>
+                                    <small>Date</small>
+
+                                    {% if session.date %}
+                                        <strong>
+                                            {{ session.date|date:"d M Y" }}
+                                        </strong>
+                                    {% else %}
+                                        <strong>Not scheduled</strong>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+
+                            <div class="session-detail">
+
+                                <span class="detail-icon">
+                                    🕐
+                                </span>
+
+                                <div>
+                                    <small>Time</small>
+
+                                    {% if session.start_time %}
+                                        <strong>
+                                            {{ session.start_time|time:"h:i A" }}
+                                        </strong>
+                                    {% else %}
+                                        <strong>Not scheduled</strong>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Status + Action -->
+                        <div class="session-action">
+
+                            {% if session.status == "confirmed" %}
+
+                                <span class="status status-success">
+                                    Confirmed
+                                </span>
+
+                                {% if session.meeting_link %}
+
+                                    <a
+                                        href="{{ session.meeting_link }}"
+                                        target="_blank"
+                                        class="btn btn-primary btn-small"
+                                    >
+                                        Join Meeting →
+                                    </a>
+
+                                {% endif %}
+
+
+                            {% elif session.status == "offered" %}
+
+                                <span class="status status-warning">
+                                    Pending
+                                </span>
+
+                                <span class="session-note">
+                                    Mentor is scheduling your session
+                                </span>
+
+
+                            {% elif session.status == "completed" %}
+
+                                <span class="status status-info">
+                                    Completed
+                                </span>
+
+
+                            {% elif session.status == "cancelled" %}
+
+                                <span class="status status-danger">
+                                    Cancelled
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-card query-empty">
+
+                <div class="empty-icon">
+                    📅
+                </div>
+
+                <h3>
+                    No sessions yet
+                </h3>
+
+                <p>
+                    Once a mentor accepts your query and schedules a
+                    session, it will appear here.
+                </p>
+
+                <a
+                    href="{% url 'create_query' %}"
+                    class="btn btn-primary"
+                >
+                    Ask a Mentor
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

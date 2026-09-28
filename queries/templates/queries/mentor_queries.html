@@ -1,127 +1,152 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Student Queries</title>
-</head>
+{% block title %}Student Queries | CareerPath{% endblock %}
 
-<body>
+{% block content %}
 
-<h1>Student Queries</h1>
+<div class="dashboard-container">
 
-<p>
-    Review questions submitted by students.
-</p>
-
-<hr>
-
-{% if queries %}
-
-    {% for student_query in queries %}
-
-        <div style="
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 10px;
-        ">
-
-            <h2>
-                {{ student_query.topic }}
-            </h2>
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Student Queries</h1>
 
             <p>
-                <strong>Student:</strong>
-                {{ student_query.name }}
+                Review student questions and provide personalized guidance.
             </p>
+        </div>
+    </div>
 
-            <p>
-                <strong>Email:</strong>
-                {{ student_query.email }}
-            </p>
 
-            <p>
-                <strong>Subject:</strong>
-                {{ student_query.subject }}
-            </p>
+    <!-- Query Statistics -->
+    <div class="query-stats">
 
-            <p>
-                <strong>Topic:</strong>
-                {{ student_query.topic }}
-            </p>
+        <div class="query-stat-card">
+            <div class="query-stat-icon">
+                💬
+            </div>
 
-            <p>
-                <strong>Question:</strong>
-            </p>
+            <div>
+                <span>Total Queries</span>
+                <strong>{{ queries|length }}</strong>
+            </div>
+        </div>
 
-            <p>
-                {{ student_query.query }}
-            </p>
+        <div class="query-stat-card">
+            <div class="query-stat-icon">
+                ⏳
+            </div>
 
-            <p>
-                <strong>Status:</strong>
-                {{ student_query.get_status_display }}
-            </p>
+            <div>
+                <span>Pending</span>
+                <strong>{{ queries|length }}</strong>
+            </div>
+        </div>
 
-            {% if student_query.status == "open" %}
+    </div>
 
-            <a href="{% url 'offer_session' student_query.id %}">
-            Offer Session
-            </a>
 
-            {% elif student_query.status == "accepted" %}
+    <!-- Queries -->
+    {% if queries %}
 
-            <p>
-            Session offered.
-            </p>
+        <div class="student-queries-list">
 
-    {% elif student_query.status == "scheduled" %}
+            {% for query in queries %}
 
-    <p>
-        Session scheduled.
-    </p>
+                <div class="student-query-card">
 
-    <p>
-        Date:
-        {{ student_query.session.date }}
-    </p>
+                    <!-- Top -->
+                    <div class="student-query-top">
 
-    <p>
-        Time:
-        {{ student_query.session.start_time }}
-        -
-        {{ student_query.session.end_time }}
-    </p>
+                        <div class="student-query-student">
 
-    <a href="{% url 'edit_session' student_query.session.id %}">
-        Edit Session
-    </a>
+                            <div class="student-query-avatar">
+                                {{ query.name|first|upper }}
+                            </div>
 
-    <a href="{% url 'cancel_session' student_query.session.id %}">
-        Cancel Session
-    </a>
+                            <div>
+                                <h3>{{ query.name }}</h3>
 
-{% endif %}
-{% endif %}
+                                <p>
+                                    {{ query.email }}
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <span class="query-status pending">
+                            Pending
+                        </span>
+
+                    </div>
+
+
+                    <!-- Query Information -->
+                    <div class="student-query-content">
+
+                        <div class="query-subject">
+                            <span>Subject</span>
+                            <strong>{{ query.subject }}</strong>
+                        </div>
+
+                        <div class="query-topic">
+                            <span>Topic</span>
+                            <strong>{{ query.topic }}</strong>
+                        </div>
+
+                        <div class="query-message">
+                            <span>Student's Query</span>
+
+                            <p>
+                                {{ query.query }}
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Footer -->
+                    <div class="student-query-footer">
+
+                        <div class="query-date">
+                            Submitted:
+                            {{ query.created_at|date:"d M Y, h:i A" }}
+                        </div>
+
+                        <a
+                            href="{% url 'offer_session' query.id %}"
+                            class="btn btn-primary"
+                        >
+                            Offer Session
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
 
         </div>
 
-    {% endfor %}
+    {% else %}
 
-{% else %}
+        <!-- Empty State -->
+        <div class="mentor-empty-card">
 
-    <p>
-        No student queries available.
-    </p>
+            <div class="empty-icon">
+                💬
+            </div>
 
-{% endif %}
+            <h3>No Student Queries</h3>
 
-<br>
+            <p>
+                There are currently no pending student queries.
+            </p>
 
-<a href="{% url 'mentor_dashboard' %}">
-    Back to Mentor Dashboard
-</a>
+        </div>
 
-</body>
+    {% endif %}
 
-</html>
+</div>
+
+{% endblock %}

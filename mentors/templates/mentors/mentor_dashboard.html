@@ -1,169 +1,299 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Mentor Dashboard</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}Mentor Dashboard | CareerPath{% endblock %}
 
-<h1>Mentor Dashboard</h1>
+{% block content %}
 
-<p>
-    Welcome, {{ mentor.name }}!
-</p>
+<div class="dashboard-container">
 
-<p>
-    You are logged in as a Mentor.
-</p>
+    <!-- HEADER -->
 
-<p>
-    <strong>Expertise:</strong> {{ mentor.expertise }}
-</p>
-
-<hr>
-
-<h2>Availability</h2>
-
-<a href="{% url 'add_availability' %}">
-    Set Availability
-</a>
-
-<br><br>
-
-{% if availabilities %}
-
-<h3>My Available Slots</h3>
-
-<table border="1" cellpadding="8">
-
-    <tr>
-        <th>Date</th>
-        <th>Start Time</th>
-        <th>End Time</th>
-        <th>Status</th>
-    </tr>
-
-    {% for slot in availabilities %}
-
-    <tr>
-        <td>{{ slot.date }}</td>
-        <td>{{ slot.start_time }}</td>
-        <td>{{ slot.end_time }}</td>
-
-        <td>
-            {% if slot.is_available %}
-                Available
-            {% else %}
-                Booked
-            {% endif %}
-        </td>
-    </tr>
-
-    {% endfor %}
-
-</table>
-
-{% else %}
-
-<p>No availability added yet.</p>
-
-{% endif %}
-
-<hr>
-
-
-<h2>Public Sessions</h2>
-
-<p>
-    Create lectures and workshops that students and mentors can join.
-</p>
-
-<a href="{% url 'create_workshop' %}">
-    Create Lecture / Workshop
-</a>
-
-<hr>
-
-<h2>Sessions</h2>
-<hr>
-
-<h2>My Published Sessions</h2>
-
-{% if workshops %}
-
-    {% for workshop in workshops %}
+    <div class="dashboard-header">
 
         <div>
 
-            <h3>{{ workshop.title }}</h3>
+            <h1>Mentor Dashboard</h1>
 
             <p>
-                <strong>Type:</strong>
-                {{ workshop.get_session_type_display }}
+                Discover public lectures and workshops from mentors
+                across CareerPath.
             </p>
 
-            <p>
-                <strong>Topic:</strong>
-                {{ workshop.topic }}
-            </p>
+        </div>
 
-            <p>
-                <strong>Date:</strong>
-                {{ workshop.date }}
-            </p>
+    </div>
 
-            <p>
-                <strong>Time:</strong>
-                {{ workshop.start_time }}
-            </p>
 
-            <p>
-                <strong>Duration:</strong>
-                {{ workshop.duration }} minutes
-            </p>
+    <!-- ALL PUBLIC SESSIONS -->
 
-            <p>
-                <strong>Status:</strong>
-                {{ workshop.get_status_display }}
-            </p>
+    <div class="dashboard-section">
 
-            <a href="{{ workshop.meeting_link }}" target="_blank">
-                Join Session
+        <div class="section-header">
+
+            <div>
+
+                <h2>Explore Lectures & Workshops</h2>
+
+                <p>
+                    All sessions published by mentors.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'workshop_list' %}"
+                class="text-link"
+            >
+                View All →
             </a>
 
         </div>
 
-        <hr>
 
-    {% endfor %}
+        {% if all_workshops %}
 
-{% else %}
+            <div class="mentor-public-workshops">
 
-    <p>You have not published any sessions yet.</p>
+                {% for workshop in all_workshops %}
 
-{% endif %}
-<hr>
+                    <div class="public-workshop-card">
 
-<h2>Student Queries</h2>
+                        <div class="public-workshop-top">
 
-<p>
-    View students who are looking for personal guidance.
-</p>
+                            {% if workshop.session_type == "lecture" %}
 
-<a href="{% url 'mentor_queries' %}">
-    View Student Queries
-</a>
-<p>View Bookings — Coming Soon</p>
+                                <span class="workshop-type">
+                                    🎓 Lecture
+                                </span>
 
-<p>Manage Sessions — Coming Soon</p>
+                            {% else %}
 
-<p>Add Meeting Links — Coming Soon</p>
+                                <span class="workshop-type">
+                                    🛠 Workshop
+                                </span>
 
-<br>
+                            {% endif %}
 
-<a href="{% url 'logout' %}">
-    Logout
-</a>
+                            <span class="public-session-label">
+                                Public
+                            </span>
 
-</body>
-</html>
+                        </div>
+
+
+                        <h3>
+                            {{ workshop.title }}
+                        </h3>
+
+                        <p class="public-workshop-topic">
+                            {{ workshop.topic }}
+                        </p>
+
+                        <p>
+                            {{ workshop.description|truncatewords:20 }}
+                        </p>
+
+
+                        <div class="public-workshop-mentor">
+
+                            {% if workshop.mentor.profile_image %}
+
+                                <img
+                                    src="{{ workshop.mentor.profile_image.url }}"
+                                    alt="{{ workshop.mentor.name }}"
+                                >
+
+                            {% else %}
+
+                                <div class="public-mentor-placeholder">
+                                    {{ workshop.mentor.name|first|upper }}
+                                </div>
+
+                            {% endif %}
+
+                            <div>
+
+                                <strong>
+                                    {{ workshop.mentor.name }}
+                                </strong>
+
+                                <span>
+                                    {{ workshop.mentor.expertise }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="public-workshop-meta">
+
+                            <span>
+                                📅
+                                {{ workshop.date|date:"d M Y" }}
+                            </span>
+
+                            <span>
+                                🕐
+                                {{ workshop.start_time|time:"h:i A" }}
+                            </span>
+
+                            <span>
+                                ⏱
+                                {{ workshop.duration }} min
+                            </span>
+
+                        </div>
+
+
+                        {% if workshop.meeting_link %}
+
+                            <a
+                                href="{{ workshop.meeting_link }}"
+                                target="_blank"
+                                class="btn btn-primary public-join-btn"
+                            >
+                                Join Session →
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="mentor-empty-card">
+
+                <div class="empty-icon">
+                    🎓
+                </div>
+
+                <h3>No public sessions yet</h3>
+
+                <p>
+                    Published lectures and workshops will appear here.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- MY WORKSHOPS -->
+
+    <div class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>My Lectures & Workshops</h2>
+
+                <p>
+                    Sessions you have published.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'mentor_workshops' %}"
+                class="text-link"
+            >
+                Manage My Workshops →
+            </a>
+
+        </div>
+
+
+        {% if my_workshops %}
+
+            <div class="my-workshops-preview">
+
+                {% for workshop in my_workshops %}
+
+                    <div class="my-workshop-row">
+
+                        <div class="my-workshop-type">
+
+                            {% if workshop.session_type == "lecture" %}
+                                🎓
+                            {% else %}
+                                🛠
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="my-workshop-info">
+
+                            <h3>
+                                {{ workshop.title }}
+                            </h3>
+
+                            <p>
+                                {{ workshop.topic }}
+                            </p>
+
+                        </div>
+
+
+                        <div class="my-workshop-date">
+
+                            <strong>
+                                {{ workshop.date|date:"d M Y" }}
+                            </strong>
+
+                            <span>
+                                {{ workshop.start_time|time:"h:i A" }}
+                            </span>
+
+                        </div>
+
+
+                        <span class="status status-success">
+                            {{ workshop.get_status_display }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="mentor-empty-card">
+
+                <div class="empty-icon">
+                    🎓
+                </div>
+
+                <h3>You haven't published anything yet</h3>
+
+                <p>
+                    Create a lecture or workshop to share your
+                    knowledge with students.
+                </p>
+
+                <a
+                    href="{% url 'create_workshop' %}"
+                    class="btn btn-primary"
+                >
+                    + Create Lecture
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

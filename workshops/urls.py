@@ -15,5 +15,10 @@ urlpatterns = [
         views.workshop_list,
         name="workshop_list"
     ),
+    path(
+            "my-workshops/",
+            views.mentor_workshops,
+            name="mentor_workshops"
+        ),
 
 ]

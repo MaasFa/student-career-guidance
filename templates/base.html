@@ -34,36 +34,61 @@
 
             <nav class="sidebar-nav">
 
-                <a href="{% url 'dashboard' %}">
-                    🏠 Dashboard
-                </a>
+    {% if user.is_authenticated and user.profile.role == "mentor" %}
 
-                <a href="{% url 'create_query' %}">
-                    💬 My Queries
-                </a>
+        <!-- MENTOR SIDEBAR -->
 
-                <a href="{% url 'mentor_list' %}">
-                    👨‍🏫 Find Mentors
-                </a>
+        <a href="{% url 'mentor_dashboard' %}">
+            🏠 Dashboard
+        </a>
 
-                <a href="{% url 'workshop_list' %}">
-                    📚 Workshops
-                </a>
+        <a href="{% url 'mentor_workshops' %}">
+    🎓 My Workshops
+</a>
 
-                <a href="#">
-                    📅 My Sessions
-                </a>
+        <a href="{% url 'mentor_queries' %}">
+            💬 Student Queries
+        </a>
 
-                <a href="#">
-                    🧭 Career Roadmap
-                </a>
+        <a href="{% url 'mentor_profile' %}">
+            👤 Profile
+        </a>
 
-                <a href="#">
-                    👤 Profile
-                </a>
+    {% else %}
 
-            </nav>
+        <!-- STUDENT SIDEBAR -->
 
+        <a href="{% url 'dashboard' %}">
+            🏠 Dashboard
+        </a>
+
+        <a href="{% url 'my_queries' %}">
+            💬 My Queries
+        </a>
+
+        <a href="{% url 'mentor_list' %}">
+            👨‍🏫 My Mentors
+        </a>
+
+        <a href="{% url 'my_sessions' %}">
+            📅 My Sessions
+        </a>
+
+        <a href="#">
+            🧭 Career Roadmap
+        </a>
+
+        <a href="{% url 'profile' %}">
+            👤 Profile
+        </a>
+
+        <a href="#">
+            ⚙️ Settings
+        </a>
+
+    {% endif %}
+
+</nav>
 
             <div class="sidebar-bottom">
 

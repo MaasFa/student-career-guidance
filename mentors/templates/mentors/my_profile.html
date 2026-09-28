@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | CareerPath{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+
+        <div>
+            <h1>My Profile</h1>
+
+            <p>
+                Manage your mentor profile and expertise.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'edit_mentor_profile' %}"
+            class="btn btn-primary"
+        >
+            Edit Profile
+        </a>
+
+    </div>
+
+
+    <div class="profile-page-card">
+
+        <div class="profile-header">
+
+            {% if mentor.profile_image %}
+
+                <img
+                    src="{{ mentor.profile_image.url }}"
+                    class="profile-avatar"
+                    alt="{{ mentor.name }}"
+                >
+
+            {% else %}
+
+                <div class="profile-avatar-placeholder">
+                    {{ mentor.name|first|upper }}
+                </div>
+
+            {% endif %}
+
+
+            <div>
+
+                <h2>
+                    {{ mentor.name }}
+                </h2>
+
+                <span class="profile-role">
+                    Mentor
+                </span>
+
+                <p>
+                    {{ mentor.user.email }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-section">
+
+            <h3>Expertise</h3>
+
+            <p>
+                {{ mentor.expertise }}
+            </p>
+
+        </div>
+
+
+        <div class="profile-section">
+
+            <h3>Experience</h3>
+
+            <p>
+                {{ mentor.experience }} years
+            </p>
+
+        </div>
+
+
+        <div class="profile-section">
+
+            <h3>About Me</h3>
+
+            <p>
+                {{ mentor.bio }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

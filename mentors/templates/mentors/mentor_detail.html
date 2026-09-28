@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mentor.name }} | CareerPath{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Back -->
+    <a href="{% url 'mentor_list' %}" class="back-link">
+        ← Back to Mentors
+    </a>
+
+
+    <!-- Mentor Profile -->
+    <div class="mentor-profile-card">
+
+        <!-- Profile Header -->
+        <div class="mentor-profile-header">
+
+            <div class="mentor-profile-avatar">
+
+                {% if mentor.profile_image %}
+
+                    <img
+                        src="{{ mentor.profile_image.url }}"
+                        alt="{{ mentor.name }}"
+                    >
+
+                {% else %}
+
+                    <div class="mentor-profile-placeholder">
+                        {{ mentor.name|first|upper }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="mentor-profile-main">
+
+                <h1>{{ mentor.name }}</h1>
+
+                <span class="mentor-expertise-tag">
+                    {{ mentor.expertise }}
+                </span>
+
+                <p class="mentor-experience">
+                    💼 {{ mentor.experience }} years experience
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- About -->
+        <div class="mentor-profile-section">
+
+            <h2>About the Mentor</h2>
+
+            <p>
+                {{ mentor.bio }}
+            </p>
+
+        </div>
+
+
+        <!-- Available Sessions -->
+        <div class="mentor-profile-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Available Sessions</h2>
+
+                    <p>
+                        Check the available time slots and connect
+                        with this mentor.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% if availabilities %}
+
+                <div class="availability-list">
+
+                    {% for availability in availabilities %}
+
+                        <div class="availability-card">
+
+                            <div class="availability-info">
+
+                                <strong>
+                                    {{ availability.date|date:"d M Y" }}
+                                </strong>
+
+                                <span>
+                                    {{ availability.start_time|time:"h:i A" }}
+                                    -
+                                    {{ availability.end_time|time:"h:i A" }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="availability-action">
+
+                                {% if availability.is_available %}
+
+                                    <span class="status status-success">
+                                        Available
+                                    </span>
+
+                                    <a
+                                        href="#"
+                                        class="btn btn-primary btn-small"
+                                    >
+                                        Request Session
+                                    </a>
+
+                                {% else %}
+
+                                    <span class="status status-danger">
+                                        Unavailable
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-card">
+
+                    <div class="empty-icon">
+                        📅
+                    </div>
+
+                    <h3>No Sessions Available</h3>
+
+                    <p>
+                        This mentor has not added any available
+                        sessions yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Guidance -->
+        <div class="mentor-contact-card">
+
+            <div>
+
+                <h3>Need personalized guidance?</h3>
+
+                <p>
+                    Submit your career question and a relevant
+                    mentor can offer you a personalized session.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'create_query' %}"
+                class="btn btn-primary"
+            >
+                Ask a Mentor
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

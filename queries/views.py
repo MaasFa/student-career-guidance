@@ -222,3 +222,51 @@ def cancel_session(request, session_id):
             "session": session,
         }
     )
+
+@login_required
+def my_queries(request):
+
+    queries = StudentQuery.objects.filter(
+        student=request.user
+    ).order_by("-created_at")
+
+    total_queries = queries.count()
+
+    open_queries = queries.filter(
+        status="open"
+    ).count()
+
+    scheduled_queries = queries.filter(
+        status="scheduled"
+    ).count()
+
+    return render(
+        request,
+        "queries/my_queries.html",
+        {
+            "queries": queries,
+            "total_queries": total_queries,
+            "open_queries": open_queries,
+            "scheduled_queries": scheduled_queries,
+        }
+    )
+@login_required
+def my_sessions(request):
+
+    sessions = Session.objects.filter(
+        student=request.user
+    ).select_related(
+        "mentor",
+        "student_query"
+    ).order_by(
+        "date",
+        "start_time"
+    )
+
+    return render(
+        request,
+        "queries/my_sessions.html",
+        {
+            "sessions": sessions
+        }
+    )

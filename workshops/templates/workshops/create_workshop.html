@@ -1,36 +1,358 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Create Workshop</title>
-</head>
+{% block title %}Create Lecture | CareerPath{% endblock %}
 
-<body>
+{% block content %}
 
-<h1>Create Lecture / Workshop</h1>
+<div class="dashboard-container">
 
-<p>
-    Publish a learning session for students and other mentors.
-</p>
+    <div class="page-back">
+        <a href="{% url 'mentor_workshops' %}">
+            ← Back to My Workshops
+        </a>
+    </div>
 
-<form method="POST">
+    <div class="create-workshop-layout">
 
-    {% csrf_token %}
+        <!-- MAIN FORM -->
 
-    {{ form.as_p }}
+        <div class="create-workshop-form-card">
 
-    <button type="submit">
-        Publish Session
-    </button>
+            <div class="form-card-header">
 
-</form>
+                <div class="form-icon lecture-icon">
+                    🎓
+                </div>
 
-<br>
+                <div>
+                    <h1>Create Lecture / Workshop</h1>
 
-<a href="{% url 'mentor_dashboard' %}">
-    Back to Dashboard
-</a>
+                    <p>
+                        Share your knowledge with students and
+                        other mentors on CareerPath.
+                    </p>
+                </div>
 
-</body>
+            </div>
 
-</html>
+            <form method="POST">
+
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-error-box">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+
+                <!-- TITLE -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.title.id_for_label }}">
+                        Lecture Title
+                    </label>
+
+                    {{ form.title }}
+
+                    {% if form.title.errors %}
+                        <div class="field-error">
+                            {{ form.title.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- TOPIC + TYPE -->
+
+                <div class="create-form-grid">
+
+                    <div class="form-group">
+
+                        <label for="{{ form.topic.id_for_label }}">
+                            Topic
+                        </label>
+
+                        {{ form.topic }}
+
+                        {% if form.topic.errors %}
+                            <div class="field-error">
+                                {{ form.topic.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="{{ form.session_type.id_for_label }}">
+                            Session Type
+                        </label>
+
+                        {{ form.session_type }}
+
+                        {% if form.session_type.errors %}
+                            <div class="field-error">
+                                {{ form.session_type.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.description.id_for_label }}">
+                        Description
+                    </label>
+
+                    {{ form.description }}
+
+                    <span class="form-help">
+                        Explain what students will learn from this session.
+                    </span>
+
+                    {% if form.description.errors %}
+                        <div class="field-error">
+                            {{ form.description.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- DATE + TIME + DURATION -->
+
+                <div class="create-form-grid three-columns">
+
+                    <div class="form-group">
+
+                        <label for="{{ form.date.id_for_label }}">
+                            Date
+                        </label>
+
+                        {{ form.date }}
+
+                        {% if form.date.errors %}
+                            <div class="field-error">
+                                {{ form.date.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="{{ form.start_time.id_for_label }}">
+                            Start Time
+                        </label>
+
+                        {{ form.start_time }}
+
+                        {% if form.start_time.errors %}
+                            <div class="field-error">
+                                {{ form.start_time.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="{{ form.duration.id_for_label }}">
+                            Duration
+                        </label>
+
+                        {{ form.duration }}
+
+                        <span class="form-help">
+                            Minutes
+                        </span>
+
+                        {% if form.duration.errors %}
+                            <div class="field-error">
+                                {{ form.duration.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- MEETING LINK -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.meeting_link.id_for_label }}">
+                        Meeting Link
+                    </label>
+
+                    {{ form.meeting_link }}
+
+                    <span class="form-help">
+                        Google Meet, Zoom, Microsoft Teams, etc.
+                    </span>
+
+                    {% if form.meeting_link.errors %}
+                        <div class="field-error">
+                            {{ form.meeting_link.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- PUBLISH INFO -->
+
+                <div class="publish-info">
+
+                    <div class="publish-info-icon">
+                        🌐
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Public Session
+                        </strong>
+
+                        <p>
+                            This lecture will be visible to students
+                            and other mentors after publishing.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <div class="create-workshop-footer">
+
+                    <a
+                        href="{% url 'mentor_workshops' %}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        🎓 Publish Lecture
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- SIDE INFORMATION -->
+
+        <div class="create-workshop-info">
+
+            <div class="create-info-card">
+
+                <div class="create-info-icon">
+                    🎓
+                </div>
+
+                <h2>Share Your Knowledge</h2>
+
+                <p>
+                    Create a public lecture or workshop that
+                    students and mentors can discover and join.
+                </p>
+
+
+                <div class="create-info-step">
+
+                    <div class="create-step-icon">
+                        1
+                    </div>
+
+                    <div>
+                        <strong>Create</strong>
+                        <span>
+                            Add your lecture details.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="create-info-step">
+
+                    <div class="create-step-icon">
+                        2
+                    </div>
+
+                    <div>
+                        <strong>Publish</strong>
+                        <span>
+                            Your session becomes visible
+                            on CareerPath.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="create-info-step">
+
+                    <div class="create-step-icon">
+                        3
+                    </div>
+
+                    <div>
+                        <strong>Connect</strong>
+                        <span>
+                            Students can join using your
+                            meeting link.
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="create-tip-card">
+
+                <span>💡</span>
+
+                <div>
+
+                    <strong>Tip</strong>
+
+                    <p>
+                        Use a clear title and specific topic
+                        so students can easily understand
+                        what your session is about.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -55,3 +55,54 @@ def workshop_list(request):
             "workshops": workshops
         }
     )
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+from mentors.models import Mentor
+
+from .forms import WorkshopForm
+from .models import Workshop
+@login_required
+def mentor_workshops(request):
+
+    mentor = Mentor.objects.get(
+        user=request.user
+    )
+
+    workshops = Workshop.objects.filter(
+        mentor=mentor
+    ).order_by(
+        "date",
+        "start_time"
+    )
+
+    return render(
+        request,
+        "workshops/mentor_workshops.html",
+        {
+            "mentor": mentor,
+            "workshops": workshops,
+        }
+    )
+@login_required
+def mentor_workshops(request):
+
+    mentor = Mentor.objects.get(
+        user=request.user
+    )
+
+    workshops = Workshop.objects.filter(
+        mentor=mentor
+    ).order_by(
+        "date",
+        "start_time"
+    )
+
+    return render(
+        request,
+        "workshops/mentor_workshops.html",
+        {
+            "mentor": mentor,
+            "workshops": workshops,
+        }
+    )

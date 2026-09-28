@@ -21,4 +21,19 @@ urlpatterns = [
         views.mentor_list,
         name="mentor_list"
     ),
+    path(
+        "detail/<int:mentor_id>/",
+        views.mentor_detail,
+        name="mentor_detail"
+    ),
+    path(
+        "profile/edit/",
+        views.edit_mentor_profile,
+        name="edit_mentor_profile"
+    ),
+    path(
+        "profile/",
+        views.mentor_profile,
+        name="mentor_profile"
+    ),
 ]

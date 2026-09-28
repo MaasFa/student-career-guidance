@@ -1,54 +1,129 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Find a Mentor</title>
-</head>
+{% block title %}My Mentors | CareerPath{% endblock %}
 
-<body>
+{% block content %}
 
-<h1>Find a Mentor</h1>
+<div class="dashboard-container">
 
-{% if mentors %}
+    <!-- Header -->
 
-{% for mentor in mentors %}
+    <div class="dashboard-header">
 
-<hr>
+        <div>
+            <h1>My Mentors</h1>
 
-<h2>{{ mentor.name }}</h2>
+            <p>
+                Explore mentors and find guidance for your career journey.
+            </p>
+        </div>
 
-<p>
-    <strong>Expertise:</strong>
-    {{ mentor.expertise }}
-</p>
+    </div>
 
-<p>
-    <strong>Experience:</strong>
-    {{ mentor.experience }} years
-</p>
 
-<p>
-    {{ mentor.bio }}
-</p>
+    <!-- Mentor Grid -->
 
-<a href="#">
-    View Mentor
-</a>
+    {% if mentors %}
 
-{% endfor %}
+        <div class="mentor-grid">
 
-{% else %}
+            {% for mentor in mentors %}
 
-<p>No mentors available yet.</p>
+                <div class="mentor-card">
 
-{% endif %}
+                    <!-- Profile -->
 
-<br><br>
+                    <div class="mentor-card-header">
 
-<a href="{% url 'dashboard' %}">
-    Back to Dashboard
-</a>
+                        {% if mentor.profile_image %}
 
-</body>
+                            <img
+                                src="{{ mentor.profile_image.url }}"
+                                alt="{{ mentor.name }}"
+                                class="mentor-image"
+                            >
 
-</html>
+                        {% else %}
+
+                            <div class="mentor-image-placeholder">
+                                {{ mentor.name|first|upper }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Information -->
+
+                    <div class="mentor-card-body">
+
+                        <h3>
+                            {{ mentor.name }}
+                        </h3>
+
+                        <span class="mentor-expertise-tag">
+                            {{ mentor.expertise }}
+                        </span>
+
+
+                        <p class="mentor-bio">
+                            {{ mentor.bio|truncatewords:25 }}
+                        </p>
+
+
+                        <div class="mentor-meta">
+
+                            <span>
+                                💼
+                                {{ mentor.experience }} years
+                                experience
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Action -->
+
+                    <div class="mentor-card-footer">
+
+                        <a
+                            href="{% url 'mentor_detail' mentor.id %}"
+                            class="btn btn-primary mentor-view-btn"
+                        >
+                            View Profile →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-card">
+
+            <div class="empty-icon">
+                👨‍🏫
+            </div>
+
+            <h3>
+                No mentors available
+            </h3>
+
+            <p>
+                Mentors will appear here once they join the platform.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

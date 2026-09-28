@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile | CareerPath{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+
+        <div>
+            <h1>Edit Profile</h1>
+
+            <p>
+                Keep your profile information up to date.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="profile-form-card">
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="profile-form-grid">
+
+                <div class="form-group">
+
+                    <label>First Name</label>
+
+                    {{ form.first_name }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Last Name</label>
+
+                    {{ form.last_name }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    {{ form.email }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Education</label>
+
+                    {{ form.education }}
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Career Interests</label>
+
+                {{ form.career_interest }}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Skills</label>
+
+                {{ form.skills }}
+
+                <small>
+                    Example: Python, SQL, Machine Learning, Django
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>About Me</label>
+
+                {{ form.bio }}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Profile Picture</label>
+
+                {{ form.profile_image }}
+
+            </div>
+
+
+            <div class="profile-form-actions">
+
+                <a
+                    href="{% url 'profile' %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

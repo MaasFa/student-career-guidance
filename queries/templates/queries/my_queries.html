@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}My Queries | CareerPath{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+
+        <div>
+            <h1>My Queries</h1>
+
+            <p>
+                Track your questions and personalized mentoring requests.
+            </p>
+        </div>
+
+        <a href="{% url 'create_query' %}" class="btn btn-primary">
+            + Ask a Question
+        </a>
+
+    </div>
+
+
+    <div class="stats-grid">
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            💬
+        </div>
+
+        <div>
+            <span class="stat-label">
+                Total Queries
+            </span>
+
+            <h3>
+                {{ total_queries }}
+            </h3>
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            ⏳
+        </div>
+
+        <div>
+            <span class="stat-label">
+                Pending
+            </span>
+
+            <h3>
+                {{ open_queries }}
+            </h3>
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            📅
+        </div>
+
+        <div>
+            <span class="stat-label">
+                Scheduled
+            </span>
+
+            <h3>
+                {{ scheduled_queries }}
+            </h3>
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- Queries Section -->
+    <div class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Your Questions</h2>
+
+                <p>
+                    View the status of your submitted queries.
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if queries %}
+
+        <div class="query-list">
+
+            {% for query in queries %}
+
+            <div class="query-card">
+
+                <!-- Top -->
+                <div class="query-card-top">
+
+                    <div>
+
+                        <span class="query-topic">
+                            {{ query.topic }}
+                        </span>
+
+                        <h3>
+                            {{ query.subject }}
+                        </h3>
+
+                    </div>
+
+
+                    {% if query.status == "open" %}
+
+                        <span class="status status-warning">
+                            Pending
+                        </span>
+
+                    {% elif query.status == "accepted" %}
+
+                        <span class="status status-info">
+                            Mentor Accepted
+                        </span>
+
+                    {% elif query.status == "scheduled" %}
+
+                        <span class="status status-success">
+                            Session Scheduled
+                        </span>
+
+                    {% elif query.status == "resolved" %}
+
+                        <span class="status status-success">
+                            Resolved
+                        </span>
+
+                    {% elif query.status == "closed" %}
+
+                        <span class="status status-danger">
+                            Closed
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Query -->
+                <div class="query-content">
+
+                    <p>
+                        {{ query.query }}
+                    </p>
+
+                </div>
+
+
+                <!-- Bottom -->
+                <div class="query-card-footer">
+
+                    <div class="query-meta">
+
+                        <span>
+                            📅
+                            {{ query.created_at|date:"d M Y" }}
+                        </span>
+
+                        <span>
+                            🕐
+                            {{ query.created_at|date:"h:i A" }}
+                        </span>
+
+                    </div>
+
+
+                    {% if query.status == "open" %}
+
+                        <span class="query-action-text">
+                            Waiting for mentor to accept your request
+                        </span>
+
+                    {% elif query.status == "accepted" %}
+
+                        <span class="query-action-text">
+                            Mentor is scheduling your session
+                        </span>
+
+                    {% elif query.status == "scheduled" %}
+
+                        {% if query.session %}
+
+                            <a
+                                href="{{ query.session.meeting_link }}"
+                                target="_blank"
+                                class="btn btn-primary btn-small"
+                            >
+                                Join Session →
+                            </a>
+
+                        {% endif %}
+
+                    {% elif query.status == "resolved" %}
+
+                        <span class="query-action-text">
+                            Session completed
+                        </span>
+
+                    {% elif query.status == "closed" %}
+
+                        <span class="query-action-text">
+                            Query closed
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <!-- Empty State -->
+
+        <div class="empty-card query-empty">
+
+            <div class="empty-icon">
+                💬
+            </div>
+
+            <h3>
+                No queries yet
+            </h3>
+
+            <p>
+                Have a question about your career, skills or learning path?
+                Ask a mentor and get personalized guidance.
+            </p>
+
+            <a
+                href="{% url 'create_query' %}"
+                class="btn btn-primary"
+            >
+                Ask Your First Question
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

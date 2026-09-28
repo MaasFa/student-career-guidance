@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}My Workshops | CareerPath{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+
+        <div>
+            <h1>My Workshops</h1>
+
+            <p>
+                Create and manage your public lectures and workshops.
+            </p>
+        </div>
+
+        <div class="mentor-workshop-actions">
+
+            <a
+                href="{% url 'create_workshop' %}"
+                class="btn btn-primary"
+            >
+                + Create Lecture
+            </a>
+
+            <a
+                href="{% url 'add_availability' %}"
+                class="btn btn-secondary"
+            >
+                + Add Availability
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {% if workshops %}
+
+        <div class="mentor-workshops-grid">
+
+            {% for workshop in workshops %}
+
+                <div class="mentor-workshop-item">
+
+                    <div class="mentor-workshop-item-top">
+
+                        {% if workshop.session_type == "lecture" %}
+
+                            <span class="workshop-type">
+                                🎓 Lecture
+                            </span>
+
+                        {% else %}
+
+                            <span class="workshop-type">
+                                🛠 Workshop
+                            </span>
+
+                        {% endif %}
+
+                        <span class="status status-success">
+                            {{ workshop.get_status_display }}
+                        </span>
+
+                    </div>
+
+
+                    <h3>
+                        {{ workshop.title }}
+                    </h3>
+
+                    <p class="workshop-topic">
+                        {{ workshop.topic }}
+                    </p>
+
+                    <p class="workshop-description">
+                        {{ workshop.description|truncatewords:25 }}
+                    </p>
+
+
+                    <div class="workshop-details">
+
+                        <span>
+                            📅 {{ workshop.date|date:"d M Y" }}
+                        </span>
+
+                        <span>
+                            🕐 {{ workshop.start_time|time:"h:i A" }}
+                        </span>
+
+                        <span>
+                            ⏱ {{ workshop.duration }} min
+                        </span>
+
+                    </div>
+
+
+                    <div class="mentor-workshop-item-footer">
+
+                        <span class="public-label">
+                            🌐 Public Session
+                        </span>
+
+                        {% if workshop.meeting_link %}
+
+                            <a
+                                href="{{ workshop.meeting_link }}"
+                                target="_blank"
+                                class="btn btn-primary btn-small"
+                            >
+                                Join Meeting
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="mentor-empty-card">
+
+            <div class="empty-icon">
+                🎓
+            </div>
+
+            <h3>No workshops yet</h3>
+
+            <p>
+                Create your first lecture or workshop and make it
+                available to students and other mentors.
+            </p>
+
+            <a
+                href="{% url 'create_workshop' %}"
+                class="btn btn-primary"
+            >
+                + Create Lecture
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

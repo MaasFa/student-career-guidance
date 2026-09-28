@@ -1,8 +1,30 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+
+from django.shortcuts import (
+    render,
+    redirect,
+    get_object_or_404
+)
+
 from .models import Mentor, Availability
-from .forms import AvailabilityForm
+
+from .forms import (
+    AvailabilityForm,
+    MentorProfileForm
+)
+
 from workshops.models import Workshop
+
+from queries.models import (
+    StudentQuery,
+    Session
+)
+
+
+# =====================================================
+# MENTOR DASHBOARD
+# =====================================================
+
 @login_required
 def mentor_dashboard(request):
 
@@ -10,14 +32,18 @@ def mentor_dashboard(request):
         user=request.user
     )
 
-    availabilities = Availability.objects.filter(
-        mentor=mentor
+    # Every published public lecture/workshop
+    all_workshops = Workshop.objects.filter(
+        status="published"
+    ).select_related(
+        "mentor"
     ).order_by(
         "date",
         "start_time"
     )
 
-    workshops = Workshop.objects.filter(
+    # Current mentor's workshops
+    my_workshops = Workshop.objects.filter(
         mentor=mentor
     ).order_by(
         "date",
@@ -29,10 +55,14 @@ def mentor_dashboard(request):
         "mentors/mentor_dashboard.html",
         {
             "mentor": mentor,
-            "availabilities": availabilities,
-            "workshops": workshops,
+            "all_workshops": all_workshops,
+            "my_workshops": my_workshops,
         }
     )
+# =====================================================
+# ADD AVAILABILITY
+# =====================================================
+
 @login_required
 def add_availability(request):
 
@@ -42,7 +72,9 @@ def add_availability(request):
 
     if request.method == "POST":
 
-        form = AvailabilityForm(request.POST)
+        form = AvailabilityForm(
+            request.POST
+        )
 
         if form.is_valid():
 
@@ -51,9 +83,12 @@ def add_availability(request):
             )
 
             availability.mentor = mentor
+
             availability.save()
 
-            return redirect("mentor_dashboard")
+            return redirect(
+                "mentor_dashboard"
+            )
 
     else:
 
@@ -66,6 +101,12 @@ def add_availability(request):
             "form": form
         }
     )
+
+
+# =====================================================
+# MENTOR LIST
+# =====================================================
+
 @login_required
 def mentor_list(request):
 
@@ -80,8 +121,15 @@ def mentor_list(request):
     )
 
 
+# =====================================================
+# MENTOR DETAIL
+# =====================================================
+
 @login_required
-def mentor_detail(request, mentor_id):
+def mentor_detail(
+    request,
+    mentor_id
+):
 
     mentor = get_object_or_404(
         Mentor,
@@ -102,5 +150,70 @@ def mentor_detail(request, mentor_id):
         {
             "mentor": mentor,
             "availabilities": availabilities,
+        }
+    )
+
+
+# =====================================================
+# MY MENTOR PROFILE
+# =====================================================
+
+@login_required
+def mentor_profile(request):
+
+    mentor = get_object_or_404(
+        Mentor,
+        user=request.user
+    )
+
+    return render(
+        request,
+        "mentors/my_profile.html",
+        {
+            "mentor": mentor
+        }
+    )
+
+
+# =====================================================
+# EDIT MENTOR PROFILE
+# =====================================================
+
+@login_required
+def edit_mentor_profile(request):
+
+    mentor = get_object_or_404(
+        Mentor,
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        form = MentorProfileForm(
+            request.POST,
+            request.FILES,
+            instance=mentor
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect(
+                "mentor_profile"
+            )
+
+    else:
+
+        form = MentorProfileForm(
+            instance=mentor
+        )
+
+    return render(
+        request,
+        "mentors/edit_profile.html",
+        {
+            "form": form,
+            "mentor": mentor
         }
     )

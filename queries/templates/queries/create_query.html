@@ -1,37 +1,294 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Ask a Mentor</title>
-</head>
+{% block title %}Ask a Mentor | CareerPath{% endblock %}
 
-<body>
+{% block content %}
 
-<h1>Ask a Mentor</h1>
+<div class="dashboard-container">
 
-<p>
-    Have a specific question or problem?
-    Submit your query and get guidance from a mentor.
-</p>
+    <div class="dashboard-header">
 
-<form method="POST">
+        <div>
+            <h1>Ask a Mentor</h1>
+            <p>
+                Get personalized guidance from a mentor based on your
+                career question or problem.
+            </p>
+        </div>
 
-    {% csrf_token %}
+    </div>
 
-    {{ form.as_p }}
 
-    <button type="submit">
-        Submit Query
-    </button>
+    <div class="ask-mentor-layout">
 
-</form>
+        <!-- LEFT: FORM -->
 
-<br>
+        <div class="ask-mentor-form-card">
 
-<a href="{% url 'dashboard' %}">
-    Back to Dashboard
-</a>
+            <div class="form-card-header">
 
-</body>
+                <div class="form-icon">
+                    💬
+                </div>
 
-</html>
+                <div>
+                    <h2>Tell us what you need help with</h2>
+
+                    <p>
+                        Provide some details so the right mentor can
+                        understand your problem.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-error-box">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+
+                <div class="ask-form-grid">
+
+                    <div class="form-group">
+
+                        <label for="{{ form.name.id_for_label }}">
+                            Your Name
+                        </label>
+
+                        {{ form.name }}
+
+                        {% if form.name.errors %}
+                            <div class="field-error">
+                                {{ form.name.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="{{ form.email.id_for_label }}">
+                            Email
+                        </label>
+
+                        {{ form.email }}
+
+                        {% if form.email.errors %}
+                            <div class="field-error">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.subject.id_for_label }}">
+                        Subject
+                    </label>
+
+                    {{ form.subject }}
+
+                    <small>
+                        Example: Career planning, Machine Learning,
+                        Resume review
+                    </small>
+
+                    {% if form.subject.errors %}
+                        <div class="field-error">
+                            {{ form.subject.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.topic.id_for_label }}">
+                        Topic
+                    </label>
+
+                    {{ form.topic }}
+
+                    <small>
+                        Mention the specific skill, technology or area
+                        you need help with.
+                    </small>
+
+                    {% if form.topic.errors %}
+                        <div class="field-error">
+                            {{ form.topic.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.query.id_for_label }}">
+                        Your Question
+                    </label>
+
+                    {{ form.query }}
+
+                    <small>
+                        Explain your problem clearly. The more context
+                        you provide, the easier it is to connect you
+                        with a suitable mentor.
+                    </small>
+
+                    {% if form.query.errors %}
+                        <div class="field-error">
+                            {{ form.query.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="ask-form-footer">
+
+                    <a
+                        href="{% url 'dashboard' %}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Submit Question →
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- RIGHT: INFORMATION -->
+
+        <div class="ask-mentor-info">
+
+            <div class="guidance-card">
+
+                <span class="premium-badge">
+                    ✦ Personalized Guidance
+                </span>
+
+                <h2>
+                    How it works
+                </h2>
+
+                <div class="guidance-step">
+
+                    <div class="guidance-number">
+                        1
+                    </div>
+
+                    <div>
+                        <h3>Ask your question</h3>
+                        <p>
+                            Tell us about your career or technical
+                            problem.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="guidance-step">
+
+                    <div class="guidance-number">
+                        2
+                    </div>
+
+                    <div>
+                        <h3>Get matched</h3>
+                        <p>
+                            A relevant mentor can review your query
+                            and offer guidance.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="guidance-step">
+
+                    <div class="guidance-number">
+                        3
+                    </div>
+
+                    <div>
+                        <h3>Schedule a session</h3>
+                        <p>
+                            The mentor schedules a personalized
+                            session with you.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="guidance-step">
+
+                    <div class="guidance-number">
+                        4
+                    </div>
+
+                    <div>
+                        <h3>Connect & learn</h3>
+                        <p>
+                            Join the online meeting and get
+                            personalized career guidance.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="ask-tip-card">
+
+                <div class="tip-icon">
+                    💡
+                </div>
+
+                <div>
+                    <h3>Tip</h3>
+
+                    <p>
+                        Be specific about your problem. For example,
+                        instead of saying "I need help with AI",
+                        mention the exact concept, project or career
+                        decision you're struggling with.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
