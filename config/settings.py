@@ -9,24 +9,25 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-dia73(j!rh=_t%xu1i7oe_uyrv41tzin(b04(y^0o#q&u=v%h@'
+SECRET_KEY = os.getenv("SECRET_KEY", "_k=+t3(e!@ekume8pv=zl6inh+n8*w6fr2ry$yiqw5l7)_q=e^")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS", "127.0.0.1,localhost"
+).split(",")
 
 # Application definition
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'mentors',
     'workshops',
     'queries',
+    'roadmaps',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +132,18 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+# Production Security Settings
+
+if not DEBUG:
+
+    SECURE_SSL_REDIRECT = True
+
+    SESSION_COOKIE_SECURE = True
+
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_HSTS_SECONDS = 31536000
+
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+    SECURE_HSTS_PRELOAD = True

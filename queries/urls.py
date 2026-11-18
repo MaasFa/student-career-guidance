@@ -55,4 +55,5 @@ urlpatterns = [
     views.my_sessions,
     name="my_sessions"
     ),
+    
 ]

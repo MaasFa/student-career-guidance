@@ -4,7 +4,11 @@ from django.contrib.auth.decorators import login_required
 from workshops.models import Workshop
 from queries.models import Session
 from .forms import RegisterForm, StudentProfileForm
-
+def home_view(request):
+    return render(
+        request,
+        "home.html"
+    )
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -87,10 +91,13 @@ def profile_view(request):
         }
     )
 @login_required
+
+@login_required
 def edit_profile(request):
 
     profile = request.user.profile
 
+    # Redirect mentors to their separate profile editor
     if profile.role == "mentor":
         return redirect("edit_mentor_profile")
 
@@ -104,21 +111,18 @@ def edit_profile(request):
 
         if form.is_valid():
 
-            profile = form.save()
+            form.save()
 
-            request.user.first_name = form.cleaned_data.get(
-                "first_name",
-                request.user.first_name
+            # Update Django User information
+            user = request.user
+            user.first_name = form.cleaned_data.get(
+                "first_name", user.first_name
             )
-
-            request.user.last_name = form.cleaned_data.get(
-                "last_name",
-                request.user.last_name
+            user.last_name = form.cleaned_data.get(
+                "last_name", user.last_name
             )
-
-            request.user.email = form.cleaned_data["email"]
-
-            request.user.save()
+            user.email = form.cleaned_data["email"]
+            user.save()
 
             return redirect("profile")
 
@@ -136,7 +140,5 @@ def edit_profile(request):
     return render(
         request,
         "accounts/edit_profile.html",
-        {
-            "form": form
-        }
+        {"form": form}
     )

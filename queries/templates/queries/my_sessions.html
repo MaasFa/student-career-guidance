@@ -1,213 +1,169 @@
 {% extends "base.html" %}
 
-{% block title %}My Sessions | CareerPath{% endblock %}
+{% block title %}
+My Personal Sessions
+{% endblock %}
+
 
 {% block content %}
 
-<div class="dashboard-container">
+<div class="page-header">
 
-    <!-- Header -->
-    <div class="dashboard-header">
+    <div>
 
-        <div>
-            <h1>My Sessions</h1>
+        <h1>My Personal Sessions</h1>
 
+        {% if is_mentor %}
             <p>
-                Manage your personalized mentoring sessions.
+                View and manage your personal mentoring sessions.
             </p>
-        </div>
-
-        <a href="{% url 'create_query' %}" class="btn btn-primary">
-            + Ask a Mentor
-        </a>
-
-    </div>
-
-
-    <!-- Sessions -->
-
-    <div class="dashboard-section">
-
-        <div class="section-header">
-
-            <div>
-                <h2>Your Mentoring Sessions</h2>
-
-                <p>
-                    Join upcoming sessions or review your previous guidance.
-                </p>
-            </div>
-
-        </div>
-
-
-        {% if sessions %}
-
-            <div class="session-list">
-
-                {% for session in sessions %}
-
-                    <div class="my-session-card">
-
-                        <!-- Left -->
-                        <div class="session-main">
-
-                            <div class="mentor-avatar">
-                                {{ session.mentor.name|first|upper }}
-                            </div>
-
-                            <div class="session-info">
-
-                                <span class="session-topic">
-                                    {{ session.student_query.topic }}
-                                </span>
-
-                                <h3>
-                                    {{ session.mentor.name }}
-                                </h3>
-
-                                <p class="mentor-expertise">
-                                    {{ session.mentor.expertise }}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Details -->
-                        <div class="session-details">
-
-                            <div class="session-detail">
-
-                                <span class="detail-icon">
-                                    📅
-                                </span>
-
-                                <div>
-                                    <small>Date</small>
-
-                                    {% if session.date %}
-                                        <strong>
-                                            {{ session.date|date:"d M Y" }}
-                                        </strong>
-                                    {% else %}
-                                        <strong>Not scheduled</strong>
-                                    {% endif %}
-                                </div>
-
-                            </div>
-
-
-                            <div class="session-detail">
-
-                                <span class="detail-icon">
-                                    🕐
-                                </span>
-
-                                <div>
-                                    <small>Time</small>
-
-                                    {% if session.start_time %}
-                                        <strong>
-                                            {{ session.start_time|time:"h:i A" }}
-                                        </strong>
-                                    {% else %}
-                                        <strong>Not scheduled</strong>
-                                    {% endif %}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Status + Action -->
-                        <div class="session-action">
-
-                            {% if session.status == "confirmed" %}
-
-                                <span class="status status-success">
-                                    Confirmed
-                                </span>
-
-                                {% if session.meeting_link %}
-
-                                    <a
-                                        href="{{ session.meeting_link }}"
-                                        target="_blank"
-                                        class="btn btn-primary btn-small"
-                                    >
-                                        Join Meeting →
-                                    </a>
-
-                                {% endif %}
-
-
-                            {% elif session.status == "offered" %}
-
-                                <span class="status status-warning">
-                                    Pending
-                                </span>
-
-                                <span class="session-note">
-                                    Mentor is scheduling your session
-                                </span>
-
-
-                            {% elif session.status == "completed" %}
-
-                                <span class="status status-info">
-                                    Completed
-                                </span>
-
-
-                            {% elif session.status == "cancelled" %}
-
-                                <span class="status status-danger">
-                                    Cancelled
-                                </span>
-
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-                {% endfor %}
-
-            </div>
-
         {% else %}
-
-            <div class="empty-card query-empty">
-
-                <div class="empty-icon">
-                    📅
-                </div>
-
-                <h3>
-                    No sessions yet
-                </h3>
-
-                <p>
-                    Once a mentor accepts your query and schedules a
-                    session, it will appear here.
-                </p>
-
-                <a
-                    href="{% url 'create_query' %}"
-                    class="btn btn-primary"
-                >
-                    Ask a Mentor
-                </a>
-
-            </div>
-
+            <p>
+                View your scheduled personal mentoring sessions.
+            </p>
         {% endif %}
 
     </div>
 
 </div>
+
+
+{% if sessions %}
+
+    <div class="card">
+
+        {% for session in sessions %}
+
+            <div class="session-card">
+
+                {% if is_mentor %}
+
+                    <h3>
+                        Student:
+                        {{ session.student.get_full_name|default:session.student.username }}
+                    </h3>
+
+                {% else %}
+
+                    <h3>
+                        Mentor:
+                        {{ session.mentor.name }}
+                    </h3>
+
+                {% endif %}
+
+
+                <p>
+                    <strong>Topic:</strong>
+                    {{ session.student_query.topic }}
+                </p>
+
+
+                <p>
+                    <strong>Date:</strong>
+                    {{ session.date|date:"d M Y" }}
+                </p>
+
+
+                <p>
+                    <strong>Time:</strong>
+                    {{ session.start_time|time:"h:i A" }}
+                    -
+                    {{ session.end_time|time:"h:i A" }}
+                </p>
+
+
+                <p>
+                    <strong>Status:</strong>
+                    {{ session.get_status_display }}
+                </p>
+
+
+                {% if session.student_query.query %}
+
+                    <p>
+                        <strong>Query:</strong>
+                        {{ session.student_query.query }}
+                    </p>
+
+                {% endif %}
+
+
+                <div class="form-actions">
+
+                    {% if session.meeting_link %}
+
+                        <a
+                            href="{{ session.meeting_link }}"
+                            target="_blank"
+                            class="btn btn-primary"
+                        >
+                            Join Meeting
+                        </a>
+
+                    {% endif %}
+
+
+                    {% if is_mentor %}
+
+                        <a
+                            href="{% url 'edit_session' session.id %}"
+                            class="btn btn-secondary"
+                        >
+                            Edit
+                        </a>
+
+
+                        {% if session.status != "cancelled" %}
+
+                            <a
+                                href="{% url 'cancel_session' session.id %}"
+                                class="btn btn-danger"
+                            >
+                                Cancel
+                            </a>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% if not forloop.last %}
+
+                <hr>
+
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+
+{% else %}
+
+    <div class="card">
+
+        <h3>No Personal Sessions</h3>
+
+        {% if is_mentor %}
+
+            <p>
+                You currently have no personal sessions with students.
+            </p>
+
+        {% else %}
+
+            <p>
+                You currently have no scheduled personal mentoring sessions.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
 
 {% endblock %}

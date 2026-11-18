@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Edit Profile | CareerPath{% endblock %}
@@ -7,17 +8,11 @@
 <div class="dashboard-container">
 
     <div class="dashboard-header">
-
         <div>
             <h1>Edit Profile</h1>
-
-            <p>
-                Keep your profile information up to date.
-            </p>
+            <p>Keep your profile information up to date.</p>
         </div>
-
     </div>
-
 
     <div class="profile-form-card">
 
@@ -25,99 +20,73 @@
 
             {% csrf_token %}
 
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    Please correct the errors below.
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
             <div class="profile-form-grid">
 
                 <div class="form-group">
-
                     <label>First Name</label>
-
                     {{ form.first_name }}
-
+                    {{ form.first_name.errors }}
                 </div>
 
-
                 <div class="form-group">
-
                     <label>Last Name</label>
-
                     {{ form.last_name }}
-
+                    {{ form.last_name.errors }}
                 </div>
 
-
                 <div class="form-group">
-
                     <label>Email</label>
-
                     {{ form.email }}
-
+                    {{ form.email.errors }}
                 </div>
-
 
                 <div class="form-group">
-
                     <label>Education</label>
-
                     {{ form.education }}
-
+                    {{ form.education.errors }}
                 </div>
 
             </div>
 
-
             <div class="form-group">
-
                 <label>Career Interests</label>
-
                 {{ form.career_interest }}
-
+                {{ form.career_interest.errors }}
             </div>
 
-
             <div class="form-group">
-
                 <label>Skills</label>
-
                 {{ form.skills }}
-
-                <small>
-                    Example: Python, SQL, Machine Learning, Django
-                </small>
-
+                {{ form.skills.errors }}
+                <small>Example: Python, SQL, Machine Learning, Django</small>
             </div>
 
-
             <div class="form-group">
-
                 <label>About Me</label>
-
                 {{ form.bio }}
-
+                {{ form.bio.errors }}
             </div>
-
 
             <div class="form-group">
-
                 <label>Profile Picture</label>
-
                 {{ form.profile_image }}
-
+                {{ form.profile_image.errors }}
             </div>
-
 
             <div class="profile-form-actions">
 
-                <a
-                    href="{% url 'profile' %}"
-                    class="btn btn-secondary"
-                >
+                <a href="{% url 'profile' %}" class="btn btn-secondary">
                     Cancel
                 </a>
 
-                <button
-                    type="submit"
-                    class="btn btn-primary"
-                >
+                <button type="submit" class="btn btn-primary">
                     Save Changes
                 </button>
 

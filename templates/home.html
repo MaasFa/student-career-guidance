@@ -1,0 +1,288 @@
+{% extends "public_base.html" %}
+
+{% block title %}CareerPath | Student Career Guidance & Personalized Roadmap Recommendation System {% endblock %}
+
+{% block content %}
+
+<div class="home-page">
+
+    <!-- Hero Section -->
+    <section class="home-hero">
+
+        <div class="home-hero-content">
+
+            <span class="home-badge">
+                🚀Student Career Guidance & Personalized Roadmap Recommendation System
+            </span>
+
+            <h1>
+                Find Your Career Path.
+                <span>Build Your Future.</span>
+            </h1>
+
+            <p>
+                Get personalized career guidance, discover expert mentors,
+                and follow a roadmap designed around your skills and goals only on our Student Career Guidance & Personalized Roadmap Recommendation System.
+            </p>
+
+            <div class="home-hero-actions">
+
+                <a
+                    href="{% url 'register' %}"
+                    class="btn btn-primary"
+                >
+                    Get Started
+                </a>
+
+            
+
+            </div>
+
+        </div>
+
+        <div class="home-hero-visual">
+
+            <div class="career-preview-card">
+
+                <div class="preview-header">
+                    <span>Career Roadmap</span>
+                    <span>✓</span>
+                </div>
+
+                <div class="roadmap-step active">
+                    <span>01</span>
+                    <div>
+                        <strong>Career Assessment</strong>
+                        <small>Discover your interests</small>
+                    </div>
+                </div>
+
+                <div class="roadmap-line"></div>
+
+                <div class="roadmap-step">
+                    <span>02</span>
+                    <div>
+                        <strong>Skill Analysis</strong>
+                        <small>Identify your skill gaps</small>
+                    </div>
+                </div>
+
+                <div class="roadmap-line"></div>
+
+                <div class="roadmap-step">
+                    <span>03</span>
+                    <div>
+                        <strong>Personalized Roadmap</strong>
+                        <small>Build your learning path</small>
+                    </div>
+                </div>
+
+                <div class="roadmap-line"></div>
+
+                <div class="roadmap-step">
+                    <span>04</span>
+                    <div>
+                        <strong>Mentor Guidance</strong>
+                        <small>Learn from experienced mentors</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Features -->
+    <section class="home-section">
+
+        <div class="home-section-heading">
+
+            <span>CAREERPATH</span>
+
+            <h2>
+                Everything You Need to Move Forward
+            </h2>
+
+            <p>
+                From discovering your career direction to connecting
+                with mentors, CareerPath brings your journey together.
+            </p>
+
+        </div>
+
+
+        <div class="home-feature-grid">
+
+            <div class="home-feature-card">
+
+                <div class="home-feature-icon">
+                    🎯
+                </div>
+
+                <h3>Career Guidance</h3>
+
+                <p>
+                    Understand your interests, skills and suitable
+                    career opportunities.
+                </p>
+
+            </div>
+
+
+            <div class="home-feature-card">
+
+                <div class="home-feature-icon">
+                    🧭
+                </div>
+
+                <h3>Personalized Roadmap</h3>
+
+                <p>
+                    Follow a structured roadmap based on your career
+                    goals and current skills.
+                </p>
+
+            </div>
+
+
+            <div class="home-feature-card">
+
+                <div class="home-feature-icon">
+                    👨‍🏫
+                </div>
+
+                <h3>Expert Mentors</h3>
+
+                <p>
+                    Connect with mentors and get guidance for your
+                    career-related questions.
+                </p>
+
+            </div>
+
+
+            <div class="home-feature-card">
+
+                <div class="home-feature-icon">
+                    🎓
+                </div>
+
+                <h3>Lectures & Workshops</h3>
+
+                <p>
+                    Attend useful lectures and workshops published
+                    by mentors.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- How It Works -->
+    <section class="home-section home-how-section">
+
+        <div class="home-section-heading">
+
+            <span>HOW IT WORKS</span>
+
+            <h2>
+                Your Career Journey in Four Steps
+            </h2>
+
+        </div>
+
+
+        <div class="home-steps">
+
+            <div class="home-step">
+
+                <div class="home-step-number">
+                    01
+                </div>
+
+                <h3>Assess</h3>
+
+                <p>
+                    Tell us about your interests, skills and goals.
+                </p>
+
+            </div>
+
+
+            <div class="home-step">
+
+                <div class="home-step-number">
+                    02
+                </div>
+
+                <h3>Discover</h3>
+
+                <p>
+                    Explore suitable career paths and identify skill gaps.
+                </p>
+
+            </div>
+
+
+            <div class="home-step">
+
+                <div class="home-step-number">
+                    03
+                </div>
+
+                <h3>Build</h3>
+
+                <p>
+                    Follow a personalized roadmap to develop your skills.
+                </p>
+
+            </div>
+
+
+            <div class="home-step">
+
+                <div class="home-step-number">
+                    04
+                </div>
+
+                <h3>Connect</h3>
+
+                <p>
+                    Learn from mentors and attend relevant sessions.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CTA -->
+    <section class="home-cta">
+
+        <h2>
+            Ready to Build Your Career?
+        </h2>
+
+        <p>
+            Start your career journey with CareerPath today.
+        </p>
+
+        <a
+            href="{% url 'register' %}"
+            class="btn btn-primary"
+        >
+            Create Your Account
+        </a>
+
+    </section>
+
+</div>
+
+{% endblock %}

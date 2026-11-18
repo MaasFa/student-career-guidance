@@ -29,6 +29,7 @@ class RegisterForm(forms.ModelForm):
             )
 
         return user
+
 class StudentProfileForm(forms.ModelForm):
 
     first_name = forms.CharField(
@@ -41,53 +42,63 @@ class StudentProfileForm(forms.ModelForm):
         required=False
     )
 
-    email = forms.EmailField()
+    email = forms.EmailField(
+        required=True
+    )
 
-    field_order = [
-    "first_name",
-    "last_name",
-    "email",
-    "profile_image",
-    "education",
-    "career_interest",
-    "skills",
-    "bio",
-   ]
     class Meta:
-            model = Profile
-            fields = [
+        model = Profile
+
+        fields = [
             "profile_image",
             "education",
             "career_interest",
             "skills",
             "bio",
-            ]
-            widgets = {
-            "education": forms.TextInput(
-                attrs={
-                    "placeholder": "e.g. B.Tech Computer Science"
-                }
-            ),
+        ]
 
-            "career_interest": forms.TextInput(
-                attrs={
-                    "placeholder": "e.g. Machine Learning, AI, Data Science"
-                }
-            ),
+        widgets = {
+            "education": forms.TextInput(attrs={
+                "placeholder": "e.g. B.Tech Computer Science"
+            }),
 
-            "skills": forms.Textarea(
-                attrs={
-                    "rows": 3,
-                    "placeholder": "Python, SQL, Machine Learning, Django..."
-                }
-            ),
+            "career_interest": forms.TextInput(attrs={
+                "placeholder": "e.g. Machine Learning, AI, Data Science"
+            }),
 
-            "bio": forms.Textarea(
-                attrs={
-                    "rows": 4,
-                    "placeholder": "Tell us a little about yourself..."
-                }
-            ),
+            "skills": forms.Textarea(attrs={
+                "rows": 3,
+                "placeholder": "Python, SQL, Machine Learning, Django..."
+            }),
 
-            "profile_image": forms.FileInput(),
+            "bio": forms.Textarea(attrs={
+                "rows": 4,
+                "placeholder": "Tell us a little about yourself..."
+            }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["first_name"].widget.attrs.update({
+            "placeholder": "Enter first name"
+        })
+
+        self.fields["last_name"].widget.attrs.update({
+            "placeholder": "Enter last name"
+        })
+
+        self.fields["email"].widget.attrs.update({
+            "placeholder": "Enter email address"
+        })
+
+        self.order_fields([
+            "first_name",
+            "last_name",
+            "email",
+            "profile_image",
+            "education",
+            "career_interest",
+            "skills",
+            "bio",
+        ])

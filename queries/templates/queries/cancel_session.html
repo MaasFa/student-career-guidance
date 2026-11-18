@@ -1,40 +1,113 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Cancel Session</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}
+Cancel Personal Session
+{% endblock %}
 
-    <h1>Cancel Session</h1>
 
-    <p>
-        Are you sure you want to cancel this session?
-    </p>
+{% block content %}
 
-    <p>
-        Student:
-        <strong>{{ session.student.username }}</strong>
-    </p>
+<div class="page-header">
 
-    <p>
-        Topic:
-        <strong>{{ session.student_query.topic }}</strong>
-    </p>
+    <div>
+
+        <h1>Cancel Personal Session</h1>
+
+        <p>
+            Review the session before cancelling it.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="form-group">
+
+        <label>
+            Student
+        </label>
+
+        <input
+            type="text"
+            value="{{ session.student.get_full_name|default:session.student.username }}"
+            readonly
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Query Topic
+        </label>
+
+        <input
+            type="text"
+            value="{{ session.student_query.topic }}"
+            readonly
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Session Date
+        </label>
+
+        <input
+            type="text"
+            value="{{ session.date|date:'d M Y' }}"
+            readonly
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Session Time
+        </label>
+
+        <input
+            type="text"
+            value="{{ session.start_time|time:'h:i A' }} - {{ session.end_time|time:'h:i A' }}"
+            readonly
+        >
+
+    </div>
+
 
     <form method="POST">
 
         {% csrf_token %}
 
-        <button type="submit">
-            Yes, Cancel Session
-        </button>
+        <div class="form-actions">
 
-        <a href="{% url 'mentor_queries' %}">
-            No, Go Back
-        </a>
+            <a
+                href="{% url 'mentor_queries' %}"
+                class="btn btn-secondary"
+            >
+                Keep Session
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                Cancel Session
+            </button>
+
+        </div>
 
     </form>
 
-</body>
-</html>
+</div>
+
+{% endblock %}

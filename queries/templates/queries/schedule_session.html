@@ -1,53 +1,183 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Schedule Session</title>
-</head>
+{% block title %}
+Schedule Personal Session
+{% endblock %}
 
-<body>
 
-<h1>Schedule Personal Session</h1>
+{% block content %}
 
-<h3>
-    Student: {{ session.student_query.name }}
-</h3>
+<div class="page-header">
 
-<p>
-    <strong>Subject:</strong>
-    {{ session.student_query.subject }}
-</p>
+    <div>
 
-<p>
-    <strong>Topic:</strong>
-    {{ session.student_query.topic }}
-</p>
+        <h1>Schedule Personal Session</h1>
 
-<p>
-    <strong>Query:</strong>
-    {{ session.student_query.query }}
-</p>
+        <p>
+            Set a date and time for the personal mentoring session.
+        </p>
 
-<hr>
+    </div>
 
-<form method="POST">
+</div>
 
-    {% csrf_token %}
 
-    {{ form.as_p }}
+<div class="card">
 
-    <button type="submit">
-        Confirm Session
-    </button>
+    <!-- Student Query Information -->
 
-</form>
+    <div class="form-group">
 
-<br>
+        <label>
+            Student
+        </label>
 
-<a href="{% url 'mentor_queries' %}">
-    Back to Queries
-</a>
+        <input
+            type="text"
+            value="{{ session.student.get_full_name|default:session.student.username }}"
+            readonly
+        >
 
-</body>
+    </div>
 
-</html>
+
+    <div class="form-group">
+
+        <label>
+            Query Topic
+        </label>
+
+        <input
+            type="text"
+            value="{{ session.student_query.topic }}"
+            readonly
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Query
+        </label>
+
+        <textarea
+            rows="5"
+            readonly
+        >{{ session.student_query.query }}</textarea>
+
+    </div>
+
+
+    <!-- Schedule Form -->
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        <div class="form-group">
+
+            <label for="date">
+                Session Date
+            </label>
+
+            <input
+                type="date"
+                id="date"
+                name="date"
+                value="{{ form.date.value|default:'' }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="start_time">
+                Start Time
+            </label>
+
+            <input
+                type="time"
+                id="start_time"
+                name="start_time"
+                value="{{ form.start_time.value|default:'' }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="end_time">
+                End Time
+            </label>
+
+            <input
+                type="time"
+                id="end_time"
+                name="end_time"
+                value="{{ form.end_time.value|default:'' }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="meeting_link">
+                Meeting Link
+            </label>
+
+            <input
+                type="url"
+                id="meeting_link"
+                name="meeting_link"
+                value="{{ form.meeting_link.value|default:'' }}"
+                placeholder="https://meet.google.com/..."
+                required
+            >
+
+        </div>
+
+
+        {% if form.errors %}
+
+            <div class="form-errors">
+
+                {{ form.errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'mentor_queries' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Schedule Session
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="roadmap-container">
+
+    <h1>{{ roadmap.title }}</h1>
+
+    <p>{{ roadmap.overview }}</p>
+
+    <p><strong>Category:</strong> {{ roadmap.get_category_display }}</p>
+    <p><strong>Suitable for:</strong> {{ roadmap.suitable_for }}</p>
+    <p><strong>Estimated duration:</strong> {{ roadmap.estimated_duration }}</p>
+    <p><strong>Difficulty:</strong> {{ roadmap.difficulty }}</p>
+
+    <hr>
+
+    <h2>Learning Roadmap</h2>
+
+    {% for stage in roadmap.stages.all %}
+    <div class="roadmap-stage">
+
+        <h3>Stage {{ forloop.counter }}: {{ stage.title }}</h3>
+
+        <p>{{ stage.description }}</p>
+
+        {% if stage.skills %}
+            <p><strong>Skills:</strong> {{ stage.skills|linebreaksbr }}</p>
+        {% endif %}
+
+        {% if stage.duration %}
+            <p><strong>Duration:</strong> {{ stage.duration }}</p>
+        {% endif %}
+
+        {% if stage.resources %}
+            <p><strong>Learning resources:</strong> {{ stage.resources|linebreaksbr }}</p>
+        {% endif %}
+
+    </div>
+    {% empty %}
+    <p>Stages for this roadmap will be added soon.</p>
+    {% endfor %}
+
+    <a href="{% url 'roadmap_list' %}">Back to Career Roadmaps</a>
+
+    <a href="#">
+        Personalized Roadmap
+    </a>
+
+</div>
+{% endblock %}

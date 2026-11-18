@@ -178,42 +178,31 @@ def mentor_profile(request):
 # =====================================================
 # EDIT MENTOR PROFILE
 # =====================================================
-
 @login_required
 def edit_mentor_profile(request):
 
-    mentor = get_object_or_404(
-        Mentor,
+    mentor = Mentor.objects.get(
         user=request.user
     )
 
     if request.method == "POST":
 
-        form = MentorProfileForm(
-            request.POST,
-            request.FILES,
-            instance=mentor
-        )
+        mentor.name = request.POST.get("name")
+        mentor.expertise = request.POST.get("expertise")
+        mentor.bio = request.POST.get("bio")
+        mentor.experience = request.POST.get("experience")
 
-        if form.is_valid():
+        if request.FILES.get("profile_image"):
+            mentor.profile_image = request.FILES.get("profile_image")
 
-            form.save()
+        mentor.save()
 
-            return redirect(
-                "mentor_profile"
-            )
-
-    else:
-
-        form = MentorProfileForm(
-            instance=mentor
-        )
+        return redirect("mentor_profile")
 
     return render(
         request,
         "mentors/edit_profile.html",
         {
-            "form": form,
             "mentor": mentor
         }
     )

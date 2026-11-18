@@ -1,42 +1,168 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Session</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}
+Edit Personal Session
+{% endblock %}
 
-    <h1>Edit Session</h1>
 
-    <h3>Student: {{ session.student.username }}</h3>
+{% block content %}
 
-    <p>
-        Topic:
-        {{ session.student_query.topic }}
-    </p>
+<div class="page-header">
 
-    <p>
-        Query:
-        {{ session.student_query.query }}
-    </p>
+    <div>
 
-    <hr>
+        <h1>Edit Personal Session</h1>
+
+        <p>
+            Update the schedule and meeting details for this session.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <!-- Student Information -->
+
+    <div class="form-group">
+
+        <label>
+            Student
+        </label>
+
+        <input
+            type="text"
+            value="{{ session.student.get_full_name|default:session.student.username }}"
+            readonly
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Query Topic
+        </label>
+
+        <input
+            type="text"
+            value="{{ session.student_query.topic }}"
+            readonly
+        >
+
+    </div>
+
+
+    <!-- Edit Session -->
 
     <form method="POST">
 
         {% csrf_token %}
 
-        {{ form.as_p }}
 
-        <button type="submit">
-            Update Session
-        </button>
+        <div class="form-group">
 
-        <a href="{% url 'mentor_queries' %}">
-            Cancel
-        </a>
+            <label for="date">
+                Session Date
+            </label>
+
+            <input
+                type="date"
+                id="date"
+                name="date"
+                value="{{ form.date.value|default:'' }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="start_time">
+                Start Time
+            </label>
+
+            <input
+                type="time"
+                id="start_time"
+                name="start_time"
+                value="{{ form.start_time.value|default:'' }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="end_time">
+                End Time
+            </label>
+
+            <input
+                type="time"
+                id="end_time"
+                name="end_time"
+                value="{{ form.end_time.value|default:'' }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="meeting_link">
+                Meeting Link
+            </label>
+
+            <input
+                type="url"
+                id="meeting_link"
+                name="meeting_link"
+                value="{{ form.meeting_link.value|default:'' }}"
+                placeholder="https://meet.google.com/..."
+                required
+            >
+
+        </div>
+
+
+        {% if form.errors %}
+
+            <div class="form-errors">
+
+                {{ form.errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'mentor_queries' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Save Changes
+            </button>
+
+        </div>
 
     </form>
 
-</body>
-</html>
+</div>
+
+{% endblock %}

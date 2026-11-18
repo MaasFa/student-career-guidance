@@ -65,7 +65,7 @@ def mentor_queries(request):
             "queries": queries,
         }
     )
-@login_required
+
 @login_required
 def offer_session(request, query_id):
 
@@ -190,28 +190,21 @@ def edit_session(request, session_id):
         }
     )
 
-
 @login_required
 def cancel_session(request, session_id):
 
-    mentor = Mentor.objects.get(
-        user=request.user
-    )
-
     session = get_object_or_404(
         Session,
-        id=session_id,
-        mentor=mentor
+        id=session_id
     )
 
     if request.method == "POST":
 
         session.status = "cancelled"
-        session.save()
+        session.student_query.status = "open"
 
-        student_query = session.student_query
-        student_query.status = "closed"
-        student_query.save()
+        session.student_query.save()
+        session.save()
 
         return redirect("mentor_queries")
 
@@ -222,7 +215,6 @@ def cancel_session(request, session_id):
             "session": session,
         }
     )
-
 @login_required
 def my_queries(request):
 
@@ -253,20 +245,46 @@ def my_queries(request):
 @login_required
 def my_sessions(request):
 
-    sessions = Session.objects.filter(
-        student=request.user
-    ).select_related(
-        "mentor",
-        "student_query"
-    ).order_by(
-        "date",
-        "start_time"
-    )
+    if hasattr(request.user, "mentor_profile"):
 
-    return render(
-        request,
-        "queries/my_sessions.html",
-        {
-            "sessions": sessions
-        }
-    )
+        mentor = request.user.mentor_profile
+
+        sessions = Session.objects.filter(
+            mentor=mentor
+        ).select_related(
+            "student",
+            "student_query"
+        ).order_by(
+            "date",
+            "start_time"
+        )
+
+        return render(
+            request,
+            "queries/my_sessions.html",
+            {
+                "sessions": sessions,
+                "is_mentor": True,
+            }
+        )
+
+    else:
+
+        sessions = Session.objects.filter(
+            student=request.user
+        ).select_related(
+            "mentor",
+            "student_query"
+        ).order_by(
+            "date",
+            "start_time"
+        )
+
+        return render(
+            request,
+            "queries/my_sessions.html",
+            {
+                "sessions": sessions,
+                "is_mentor": False,
+            }
+        )

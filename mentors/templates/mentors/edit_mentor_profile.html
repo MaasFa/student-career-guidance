@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Mentor Profile
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>Edit Profile</h1>
+
+        <p>
+            Update your mentor profile information.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+
+        <!-- Profile Image -->
+
+        <div class="form-group">
+
+            <label>
+                Profile Image
+            </label>
+
+            {% if mentor.profile_image %}
+
+                <div style="margin-bottom: 12px;">
+
+                    <img
+                        src="{{ mentor.profile_image.url }}"
+                        alt="Profile Image"
+                        style="
+                            width: 80px;
+                            height: 80px;
+                            border-radius: 50%;
+                            object-fit: cover;
+                        "
+                    >
+
+                </div>
+
+            {% endif %}
+
+            <input
+                type="file"
+                name="profile_image"
+                accept="image/*"
+            >
+
+        </div>
+
+
+        <!-- Name -->
+
+        <div class="form-group">
+
+            <label for="name">
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ mentor.name }}"
+                placeholder="Enter your full name"
+                required
+            >
+
+        </div>
+
+
+        <!-- Expertise -->
+
+        <div class="form-group">
+
+            <label for="expertise">
+                Expertise
+            </label>
+
+            <input
+                type="text"
+                id="expertise"
+                name="expertise"
+                value="{{ mentor.expertise }}"
+                placeholder="e.g. Machine Learning, Data Science"
+                required
+            >
+
+        </div>
+
+
+        <!-- Experience -->
+
+        <div class="form-group">
+
+            <label for="experience">
+                Experience
+            </label>
+
+            <input
+                type="number"
+                id="experience"
+                name="experience"
+                value="{{ mentor.experience }}"
+                min="0"
+                placeholder="Years of experience"
+                required
+            >
+
+        </div>
+
+
+        <!-- Bio -->
+
+        <div class="form-group">
+
+            <label for="bio">
+                Bio
+            </label>
+
+            <textarea
+                id="bio"
+                name="bio"
+                rows="6"
+                placeholder="Tell students about your experience and expertise..."
+                required
+            >{{ mentor.bio }}</textarea>
+
+        </div>
+
+
+        <!-- Actions -->
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'mentor_profile' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+{% endblock %}

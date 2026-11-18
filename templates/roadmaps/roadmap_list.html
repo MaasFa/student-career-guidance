@@ -1,0 +1,37 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="roadmap-container">
+
+    <h1>Career Roadmaps</h1>
+    <p>Explore career paths and follow structured learning journeys
+       to build your skills.</p>
+
+    <div class="roadmap-grid">
+
+        {% for roadmap in roadmaps %}
+        <div class="roadmap-card">
+
+            <h2>{{ roadmap.title }}</h2>
+
+            <p>{{ roadmap.short_description }}</p>
+
+            <p><strong>Category:</strong> {{ roadmap.get_category_display }}</p>
+            <p><strong>Suitable for:</strong> {{ roadmap.suitable_for }}</p>
+            <p><strong>Duration:</strong> {{ roadmap.estimated_duration }}</p>
+            <p><strong>Level:</strong> {{ roadmap.difficulty }}</p>
+
+            <a href="{% url 'roadmap_detail' roadmap.slug %}">
+                Explore Roadmap
+            </a>
+
+        </div>
+        {% empty %}
+        <p>No career roadmaps have been published yet.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+{% endblock %}
