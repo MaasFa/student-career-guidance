@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ analysis.jd.title }} - Skill Gap Analysis | CareerPath{% endblock %}
+
+{% block content %}
+<!-- Include HTMX and Chart.js -->
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="page-container" style="max-width: 1320px; margin: 0 auto; padding: 24px;">
+
+    <!-- Breadcrumb & Actions -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted);">
+            <a href="{% url 'skill_analysis:dashboard' %}" style="color: var(--accent); font-weight: 600;">← Back to Analyses</a>
+            <span>/</span>
+            <span style="color: var(--text); font-weight: 600;">Analysis #{{ analysis.id }}</span>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'skill_analysis:dashboard' %}#upload-section" class="btn btn-secondary" style="font-size: 13px;">
+                ➕ New Analysis
+            </a>
+            <form action="{% url 'skill_analysis:delete_analysis' analysis.id %}" method="POST" onsubmit="return confirm('Delete this analysis and its roadmap?');" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" style="font-size: 13px; border: none; cursor: pointer;">
+                    🗑️ Delete
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header Hero Banner -->
+    <div class="card" style="margin-bottom: 24px; padding: 24px 28px; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: #ffffff; border: none; box-shadow: 0 8px 24px rgba(30, 58, 138, 0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <div style="max-width: 750px;">
+                <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; margin-bottom: 6px;">
+                    🎯 Target Role Evaluation
+                </div>
+                <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 8px; line-height: 1.2;">
+                    {{ analysis.jd.title }}
+                </h1>
+                <div style="display: flex; gap: 16px; font-size: 14px; opacity: 0.9; flex-wrap: wrap;">
+                    <span>📄 Resume: {{ analysis.resume.file.name|slice:"8:" }} ({{ analysis.resume.file_type|upper }})</span>
+                    <span>•</span>
+                    <span>📅 Analyzed on {{ analysis.created_at|date:"F d, Y - H:i" }}</span>
+                </div>
+            </div>
+
+            <!-- Match Score Hero Gauge -->
+            <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); padding: 18px 26px; border-radius: 16px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.25); min-width: 170px;">
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.9;">
+                    Match Score
+                </div>
+                <div style="font-size: 42px; font-weight: 900; line-height: 1.1; margin: 4px 0;">
+                    {{ analysis.match_score|floatformat:1 }}%
+                </div>
+                <div>
+                    {% if analysis.match_score >= 75 %}
+                        <span style="background: #22c55e; color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;">
+                            Strong Fit
+                        </span>
+                    {% elif analysis.match_score >= 50 %}
+                        <span style="background: #f59e0b; color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;">
+                            Moderate Fit
+                        </span>
+                    {% else %}
+                        <span style="background: #ef4444; color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;">
+                            Gap Intensive
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics & Breakdown Section (Module 6) -->
+    <div style="display: grid; grid-template-columns: 360px 1fr; gap: 24px; margin-bottom: 24px;">
+        
+        <!-- Chart.js Breakdown Card -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                    <span>📊</span> Skill Gap Distribution
+                </h2>
+                <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">
+                    Semantic comparison across {{ counts.total }} target requirements
+                </p>
+                <div style="position: relative; height: 210px; margin-bottom: 14px;">
+                    <canvas id="gapDistributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Metric counters -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; border-top: 1px solid var(--border); padding-top: 14px;">
+                <div style="background: #f0fdf4; border-radius: 8px; padding: 10px;">
+                    <div style="font-size: 20px; font-weight: 800; color: #16a34a;">{{ counts.matched }}</div>
+                    <div style="font-size: 11px; font-weight: 600; color: #166534;">Matched (≥80%)</div>
+                </div>
+                <div style="background: #fffbeb; border-radius: 8px; padding: 10px;">
+                    <div style="font-size: 20px; font-weight: 800; color: #d97706;">{{ counts.partial }}</div>
+                    <div style="font-size: 11px; font-weight: 600; color: #92400e;">Partial (55-79%)</div>
+                </div>
+                <div style="background: #fef2f2; border-radius: 8px; padding: 10px;">
+                    <div style="font-size: 20px; font-weight: 800; color: #dc2626;">{{ counts.missing }}</div>
+                    <div style="font-size: 11px; font-weight: 600; color: #991b1b;">Missing (&lt;55%)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Semantic Skill Gap Table (Module 3 & 6) -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                        <span>🔍</span> Semantic Gap Evaluation
+                    </h2>
+                    <p style="font-size: 13px; color: var(--muted); margin-top: 2px;">
+                        Cosine similarity calculated using <code>all-MiniLM-L6-v2</code> sentence embeddings.
+                    </p>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border); color: var(--muted); font-size: 11px; text-transform: uppercase;">
+                            <th style="padding: 10px 12px;">Required JD Skill</th>
+                            <th style="padding: 10px 12px;">Category</th>
+                            <th style="padding: 10px 12px;">Importance</th>
+                            <th style="padding: 10px 12px;">Status</th>
+                            <th style="padding: 10px 12px;">Closest Resume Skill</th>
+                            <th style="padding: 10px 12px; text-align: right;">Similarity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for gap in gaps %}
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px; font-weight: 700; color: var(--text);">
+                                    {{ gap.jd_skill.name }}
+                                </td>
+                                <td style="padding: 12px; color: var(--muted);">
+                                    {{ gap.jd_skill.category }}
+                                </td>
+                                <td style="padding: 12px;">
+                                    {% if gap.jd_skill.occurrences.first.importance == 'required' or not gap.jd_skill.occurrences.first.importance %}
+                                        <span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b;">
+                                            Required
+                                        </span>
+                                    {% else %}
+                                        <span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: #f3f4f6; color: #4b5563;">
+                                            Nice to Have
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 12px;">
+                                    {% if gap.status == 'matched' %}
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 3px 10px; border-radius: 999px;">
+                                            <span>✓</span> Matched
+                                        </span>
+                                    {% elif gap.status == 'partial' %}
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #d97706; background: #fef3c7; padding: 3px 10px; border-radius: 999px;">
+                                            <span>⚡</span> Partial
+                                        </span>
+                                    {% else %}
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #dc2626; background: #fee2e2; padding: 3px 10px; border-radius: 999px;">
+                                            <span>✕</span> Missing
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 12px; color: #334155;">
+                                    {% if gap.closest_resume_skill %}
+                                        <strong>{{ gap.closest_resume_skill.name }}</strong>
+                                    {% else %}
+                                        <span style="color: var(--muted); font-style: italic;">None detected</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 12px; text-align: right; font-weight: 700;">
+                                    <span style="{% if gap.similarity >= 0.8 %}color: #16a34a;{% elif gap.similarity >= 0.55 %}color: #d97706;{% else %}color: #dc2626;{% endif %}">
+                                        {{ gap.similarity|floatformat:2 }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modules 4 & 5: Personalized Learning Roadmap -->
+    <div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 24px; align-items: start;">
+        
+        <!-- Roadmap & Progress Tracking -->
+        <div>
+            <div class="card" style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                            <span>🧭</span> {{ roadmap.title|default:"Personalized Career Learning Roadmap" }}
+                        </h2>
+                        <p style="font-size: 13px; color: var(--muted); margin-top: 2px;">
+                            Engineered sequentially from foundations to advanced capstone. Update item status to track your progress live.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Overall Hours-Weighted Progress Bar (Module 5) -->
+                <div id="overall-roadmap-progress-bar" style="margin-bottom: 24px; padding: 14px 18px; background: #f8fafc; border: 1px solid var(--border); border-radius: 10px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px;">
+                        <span>Overall Learning Completion (Hours-Weighted)</span>
+                        <span style="color: var(--accent);">{{ roadmap.overall_progress_percentage }}%</span>
+                    </div>
+                    <div style="height: 12px; background: #e2e8f0; border-radius: 999px; overflow: hidden;">
+                        <div style="height: 100%; width: {{ roadmap.overall_progress_percentage }}%; background: linear-gradient(90deg, var(--accent), var(--success)); transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+
+                <!-- Phases list -->
+                {% if phases %}
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        {% for phase in phases %}
+                            <div class="card" style="border: 1px solid var(--border); padding: 18px; background: #fafafa; border-radius: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                                    <h3 style="font-size: 16px; font-weight: 700; color: var(--primary);">
+                                        {{ phase.title }}
+                                    </h3>
+                                    
+                                    <!-- Phase progress bar container -->
+                                    <div id="phase-progress-{{ phase.id }}" style="min-width: 160px;">
+                                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 4px;">
+                                            <span style="color: var(--muted);">Phase Progress</span>
+                                            <span style="color: var(--text);">{{ phase.progress_percentage }}%</span>
+                                        </div>
+                                        <div style="height: 6px; background: #e2e8f0; border-radius: 999px; overflow: hidden;">
+                                            <div style="height: 100%; width: {{ phase.progress_percentage }}%; background: var(--accent); transition: width 0.3s ease;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Phase items with HTMX updates -->
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    {% for item in phase.items.all %}
+                                        {% include "skill_analysis/partials/roadmap_item_row.html" with item=item phase=phase roadmap=roadmap phase_progress=phase.progress_percentage overall_progress=roadmap.overall_progress_percentage %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--muted);">No roadmap generated for this analysis.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Module 7: AI Career Coach Chat Panel -->
+        <div class="card" style="box-shadow: 0 4px 16px rgba(0,0,0,0.06); position: sticky; top: 20px;">
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                        <span>🤖</span> AI Career Coach
+                    </h2>
+                    <p style="font-size: 12px; color: var(--muted); margin-top: 2px;">
+                        Grounded in your gaps, roadmap items, and target role.
+                    </p>
+                </div>
+                <span style="background: #dcfce7; color: #166534; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;">
+                    ● Active
+                </span>
+            </div>
+
+            <!-- Chat scroll area -->
+            <div id="chat-messages-container" style="height: 380px; overflow-y: auto; padding-right: 6px; margin-bottom: 14px;">
+                {% if chat_messages %}
+                    {% for msg in chat_messages %}
+                        <div class="chat-bubble chat-bubble-{{ msg.role }}" style="display: flex; margin-bottom: 12px; {% if msg.role == 'user' %}justify-content: flex-end;{% else %}justify-content: flex-start;{% endif %}">
+                            <div style="max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; {% if msg.role == 'user' %}background: var(--primary); color: #fff; border-bottom-right-radius: 2px;{% else %}background: #f1f5f9; color: var(--text); border-bottom-left-radius: 2px; border: 1px solid var(--border);{% endif %}">
+                                <div style="font-size: 11px; font-weight: 700; opacity: 0.8; margin-bottom: 2px; text-transform: uppercase;">
+                                    {% if msg.role == 'user' %}You{% else %}AI Career Coach{% endif %}
+                                </div>
+                                <div style="white-space: pre-wrap;">{{ msg.content }}</div>
+                                <div style="font-size: 10px; opacity: 0.6; text-align: right; margin-top: 4px;">
+                                    {{ msg.created_at|date:"H:i" }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Initial welcome guidance -->
+                    <div style="text-align: center; padding: 30px 14px; color: var(--muted);">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🎓</div>
+                        <p style="font-weight: 700; color: var(--text); font-size: 14px;">Hello! I'm your Career Coach.</p>
+                        <p style="font-size: 12px; margin-top: 6px; line-height: 1.4;">
+                            I've reviewed your resume against the <strong>{{ analysis.jd.title }}</strong> role.
+                            Ask me how to address your missing skills, what resources to use, or how to prepare for interviews!
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Chat Input Form using HTMX -->
+            <form hx-post="{% url 'skill_analysis:chat_assistant' analysis.id %}"
+                  hx-target="#chat-messages-container"
+                  hx-swap="beforeend"
+                  hx-indicator="#chat-loading-indicator"
+                  onsubmit="setTimeout(() => { document.getElementById('chat-input').value = ''; scrollToBottom(); }, 20);"
+                  style="margin: 0;">
+                {% csrf_token %}
+                <div style="display: flex; gap: 8px;">
+                    <input type="text"
+                           id="chat-input"
+                           name="message"
+                           required
+                           placeholder="Ask a question about your gaps or roadmap..."
+                           style="flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit;">
+                    <button type="submit" class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;">
+                        Send
+                    </button>
+                </div>
+                <div id="chat-loading-indicator" class="htmx-indicator" style="font-size: 12px; color: var(--accent); font-weight: 600; margin-top: 6px; display: none;">
+                    Thinking & generating grounded guidance...
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Chart.js Initialization & Scroll Script -->
+<script>
+    function scrollToBottom() {
+        const container = document.getElementById('chat-messages-container');
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+    window.addEventListener('load', scrollToBottom);
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id === 'chat-messages-container') {
+            scrollToBottom();
+        }
+    });
+
+    // Render Chart.js Donut
+    const ctx = document.getElementById('gapDistributionChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Matched (≥80%)', 'Partial (55-79%)', 'Missing (<55%)'],
+            datasets: [{
+                data: [{{ counts.matched }}, {{ counts.partial }}, {{ counts.missing }}],
+                backgroundColor: [
+                    '#16a34a', // green
+                    '#f59e0b', // amber
+                    '#ef4444'  // red
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff',
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        font: { size: 12, family: 'Inter' },
+                        padding: 12
+                    }
+                }
+            },
+            cutout: '68%'
+        }
+    });
+</script>
+{% endblock %}

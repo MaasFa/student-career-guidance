@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Resume & Job Description Analysis | CareerPath{% endblock %}
+
+{% block content %}
+<div class="page-container" style="max-width: 1280px; margin: 0 auto; padding: 24px;">
+
+    <!-- Header Section -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h1 class="page-title" style="margin-bottom: 4px; display: flex; align-items: center; gap: 10px;">
+                <span>🎯</span> Resume & Skill Gap Analysis
+            </h1>
+            <p class="page-subtitle" style="margin-bottom: 0;">
+                Extract skills from your resume, match against job requirements using AI embeddings, detect gaps, and get a personalized learning roadmap.
+            </p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <a href="#upload-section" class="btn btn-primary" style="display: flex; align-items: center; gap: 6px;">
+                <span>➕</span> New Analysis
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 28px;">
+        <div class="card" style="border-left: 4px solid var(--accent); padding: 18px 24px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase;">Total Analyses</div>
+            <div style="font-size: 32px; font-weight: 800; color: var(--text); margin-top: 4px;">{{ total_analyses }}</div>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--success); padding: 18px 24px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase;">Highest Match Score</div>
+            <div style="font-size: 32px; font-weight: 800; color: var(--success); margin-top: 4px;">{{ highest_match }}%</div>
+        </div>
+        <div class="card" style="border-left: 4px solid #8b5cf6; padding: 18px 24px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase;">Engine</div>
+            <div style="font-size: 18px; font-weight: 700; color: #8b5cf6; margin-top: 10px;">Sentence-Transformers & AI</div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+        
+        <!-- Module 1: Upload Form -->
+        <div id="upload-section" class="card" style="box-shadow: 0 4px 16px rgba(0,0,0,0.06); border-top: 4px solid var(--primary);">
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 20px;">
+                <h2 style="font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span>📄</span> Ingest Resume & Job Description
+                </h2>
+                <p style="font-size: 14px; color: var(--muted); margin-top: 4px;">
+                    Upload your latest CV (.pdf, .docx) and paste the target job description to run modules 1–4.
+                </p>
+            </div>
+
+            <form action="{% url 'skill_analysis:create_analysis' %}" method="POST" enctype="multipart/form-data" id="analysis-form">
+                {% csrf_token %}
+
+                <div style="margin-bottom: 18px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px;">
+                        Target Job Title / Role <span style="color: var(--danger);">*</span>
+                    </label>
+                    {{ form.title }}
+                    <small style="color: var(--muted); font-size: 12px; display: block; margin-top: 4px;">
+                        e.g., Senior Full Stack Engineer, Junior Data Scientist
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 18px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px;">
+                        Upload Resume (PDF or DOCX) <span style="color: var(--danger);">*</span>
+                    </label>
+                    <div style="border: 2px dashed var(--border); border-radius: 10px; padding: 20px; text-align: center; background: #fafbfc;">
+                        {{ form.resume_file }}
+                        <p style="font-size: 12px; color: var(--muted); margin-top: 8px;">
+                            Supported formats: PDF, DOCX (text-selectable, up to 10MB)
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 22px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px;">
+                        Job Description (Requirements & Responsibilities) <span style="color: var(--danger);">*</span>
+                    </label>
+                    {{ form.jd_text }}
+                    <small style="color: var(--muted); font-size: 12px; display: block; margin-top: 4px;">
+                        Paste the full job post text with required qualifications and tech stack.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submit-btn" style="width: 100%; padding: 14px; font-size: 16px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <span>⚡</span> Run Full AI Skill & Gap Analysis
+                </button>
+                <div id="loading-spinner" style="display: none; text-align: center; margin-top: 14px; font-weight: 600; color: var(--accent);">
+                    <div class="spinner" style="display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(37,99,235,0.3); border-radius: 50%; border-top-color: var(--accent); animation: spin 1s ease-in-out infinite;"></div>
+                    <span style="margin-left: 8px;">Extracting skills & embedding semantic vectors...</span>
+                </div>
+            </form>
+        </div>
+
+        <!-- History of Past Analyses -->
+        <div class="card">
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 18px;">
+                <h2 style="font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span>🕒</span> Analysis History
+                </h2>
+                <p style="font-size: 14px; color: var(--muted); margin-top: 4px;">
+                    Your past resumes, evaluated match scores, and learning roadmaps.
+                </p>
+            </div>
+
+            {% if analyses %}
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    {% for item in analyses %}
+                        <div style="border: 1px solid var(--border); border-radius: 10px; padding: 16px; background: #ffffff; display: flex; justify-content: space-between; align-items: center; transition: transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.06)'" onmouseout="this.style.boxShadow='none'">
+                            <div>
+                                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">
+                                    <a href="{% url 'skill_analysis:analysis_detail' item.id %}" style="color: var(--primary);">
+                                        {{ item.jd.title }}
+                                    </a>
+                                </h3>
+                                <div style="display: flex; gap: 12px; font-size: 13px; color: var(--muted);">
+                                    <span>📅 {{ item.created_at|date:"M d, Y" }}</span>
+                                    <span>•</span>
+                                    <span style="text-transform: capitalize;">
+                                        {% if item.status == 'completed' %}
+                                            <span style="color: var(--success); font-weight: 600;">● Completed</span>
+                                        {% elif item.status == 'failed' %}
+                                            <span style="color: var(--danger); font-weight: 600;">● Failed</span>
+                                        {% else %}
+                                            <span style="color: #f59e0b; font-weight: 600;">● {{ item.status }}</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div style="text-align: right; display: flex; align-items: center; gap: 16px;">
+                                <div>
+                                    <div style="font-size: 20px; font-weight: 800; color: {% if item.match_score >= 75 %}var(--success){% elif item.match_score >= 50 %}#f59e0b{% else %}var(--danger){% endif %};">
+                                        {{ item.match_score|floatformat:1 }}%
+                                    </div>
+                                    <div style="font-size: 11px; color: var(--muted); font-weight: 600;">MATCH SCORE</div>
+                                </div>
+                                <a href="{% url 'skill_analysis:analysis_detail' item.id %}" class="btn btn-secondary" style="padding: 8px 14px; font-size: 13px;">
+                                    View Report →
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 40px 20px; color: var(--muted);">
+                    <div style="font-size: 40px; margin-bottom: 12px;">📑</div>
+                    <p style="font-weight: 600; font-size: 16px; color: var(--text);">No analyses created yet</p>
+                    <p style="font-size: 14px; margin-top: 4px;">
+                        Upload your resume on the left to evaluate your fit against any target job opening.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .form-input, .form-textarea, .form-file-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    .form-input:focus, .form-textarea:focus {
+        border-color: var(--accent);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+</style>
+
+<script>
+    document.getElementById('analysis-form').addEventListener('submit', function() {
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('loading-spinner').style.display = 'block';
+    });
+</script>
+{% endblock %}
